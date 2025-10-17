@@ -6,9 +6,10 @@ const path = require('path');
 const http = require('http');
 const socketIo = require('socket.io');
 const cookieParser = require('cookie-parser');
-const { setUserLocals, protect } = require('./middleware/authMiddleware');
+
 const connectDB = require('./config/db');
 const Message = require('./models/message');
+const { setUserLocals, protect } = require('./middleware/authMiddleware');
 const userController = require('./controllers/userController');
 
 const authRoutes = require('./routes/authRoutes');
