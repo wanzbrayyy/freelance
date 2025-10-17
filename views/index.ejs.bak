@@ -1,3 +1,4 @@
+<!-- views/index.ejs (NEW & IMPROVED) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,42 +7,84 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body class="homepage-body">
-    <%- include('partials/header') %>
+    <%- include('partials/header', { currentUser: locals.currentUser || null }) %>
 
-    <main class="hero-section">
-        <div class="hero-content glass-effect">
-            <h1>Temukan Pekerjaan Impian Anda, atau Freelancer Ideal Anda</h1>
-            <p>Jelajahi ribuan lowongan pekerjaan online atau tawarkan jasa Anda kepada klien global.</p>
-            <div class="search-bar">
-                <input type="text" placeholder="Cari pekerjaan, skill, atau freelancer...">
-                <button class="btn btn-primary"><i class="fas fa-search"></i> Cari</button>
+    <!-- ======================= -->
+    <!--     HERO SECTION        -->
+    <!-- ======================= -->
+    <main class="hero-section-v2">
+        <div class="hero-content-v2">
+            <h1>Temukan Talenta, Wujudkan Proyek.</h1>
+            <p class="subtitle">Platform freelance terdepan di Asia Tenggara yang menghubungkan bisnis inovatif dengan para profesional berbakat.</p>
+            <div class="hero-buttons">
+                <a href="/jobs" class="btn btn-primary btn-large"><i class="fas fa-briefcase"></i> Temukan Pekerjaan</a>
+                <a href="/jobs/create" class="btn btn-secondary btn-large"><i class="fas fa-plus-circle"></i> Posting Proyek</a>
             </div>
-            <div class="hero-cta-buttons">
-                <a href="/jobs" class="btn btn-secondary"><i class="fas fa-briefcase"></i> Jelajahi Pekerjaan</a>
-                <a href="/auth/register?role=freelancer" class="btn btn-tertiary"><i class="fas fa-handshake"></i> Jadi Freelancer</a>
-            </div>
+        </div>
+        <div class="hero-image-v2">
+            <!-- Ganti dengan URL ilustrasi yang Anda suka, misalnya dari undraw.co -->
+            <img src="https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png" alt="Freelancers collaborating on a project">
         </div>
     </main>
 
-    <section class="info-section">
-        <div class="info-card glass-effect">
-            <i class="fas fa-globe icon"></i>
-            <h3>Jaringan Global</h3>
-            <p>Terhubung dengan klien dan freelancer dari seluruh dunia.</p>
+    <!-- ======================= -->
+    <!--   WHY CHOOSE US SECTION -->
+    <!-- ======================= -->
+    <section class="feature-section">
+        <div class="section-title">
+            <h2>Mengapa Memilih Job Freelance?</h2>
+            <p>Kami menawarkan lebih dari sekadar platform—kami membangun jembatan kesuksesan.</p>
         </div>
-        <div class="info-card glass-effect">
-            <i class="fas fa-shield-alt icon"></i>
-            <h3>Aman & Terpercaya</h3>
-            <p>Sistem pembayaran yang aman dan ulasan transparan.</p>
-        </div>
-        <div class="info-card glass-effect">
-            <i class="fas fa-chart-line icon"></i>
-            <h3>Kembangkan Karir Anda</h3>
-            <p>Temukan proyek menarik dan kembangkan portofolio Anda.</p>
+        <div class="feature-grid">
+            <div class="feature-card glass-effect">
+                <i class="fas fa-shield-alt icon-feature"></i>
+                <h3>Transaksi Aman</h3>
+                <p>Dengan sistem Escrow kami, dana Anda aman hingga pekerjaan selesai dan disetujui.</p>
+            </div>
+            <div class="feature-card glass-effect">
+                <i class="fas fa-globe-asia icon-feature"></i>
+                <h3>Talenta Terkurasi</h3>
+                <p>Temukan profesional terbaik dari seluruh Asia Tenggara yang telah terverifikasi.</p>
+            </div>
+            <div class="feature-card glass-effect">
+                <i class="fas fa-headset icon-feature"></i>
+                <h3>Dukungan 24/7</h3>
+                <p>Tim support kami siap membantu Anda kapan saja untuk memastikan proyek berjalan lancar.</p>
+            </div>
         </div>
     </section>
 
-    <%- include('partials/footer') %>
+    <!-- ======================= -->
+    <!--  POPULAR CATEGORIES     -->
+    <!-- ======================= -->
+    <section class="category-section">
+        <div class="section-title">
+            <h2>Jelajahi Kategori Populer</h2>
+            <p>Temukan jasa yang Anda butuhkan dalam berbagai bidang.</p>
+        </div>
+        <div class="category-grid">
+            <a href="/jobs?category=Web+Development" class="category-card"><i class="fas fa-code"></i><span>Web Development</span></a>
+            <a href="/jobs?category=Graphic+Design" class="category-card"><i class="fas fa-paint-brush"></i><span>Graphic Design</span></a>
+            <a href="/jobs?category=Digital+Marketing" class="category-card"><i class="fas fa-bullhorn"></i><span>Digital Marketing</span></a>
+            <a href="/jobs?category=Writing+%26+Translation" class="category-card"><i class="fas fa-pen-nib"></i><span>Writing</span></a>
+            <a href="/jobs?category=Video+%26+Animation" class="category-card"><i class="fas fa-video"></i><span>Video & Animation</span></a>
+            <a href="/jobs?category=UI%2FUX+Design" class="category-card"><i class="fas fa-object-group"></i><span>UI/UX Design</span></a>
+        </div>
+    </section>
+
+    <!-- ======================= -->
+    <!--   WHATSAPP BOT AD       -->
+    <!-- ======================= -->
+    <section class="promo-section-whatsapp">
+        <div class="promo-content">
+            <i class="fab fa-whatsapp"></i>
+            <h2>Tingkatkan Bisnis Anda dengan Notifikasi WhatsApp!</h2>
+            <p>Ingin bot notifikasi WhatsApp kustom untuk website atau bisnis Anda? Dapatkan pengingat otomatis, update pesanan, dan lebih banyak lagi, langsung ke WhatsApp pelanggan Anda. Hubungi sekarang untuk konsultasi gratis!</p>
+            <a href="https://t.me/maverick_dark" target="_blank" class="btn btn-whatsapp">Sewa  WhatsApp di Telegram</a>
+        </div>
+    </section>
+    
+    <%- include('partials/footer', { currentUser: locals.currentUser || null }) %>
     <script src="/js/main.js"></script>
 </body>
 </html>
