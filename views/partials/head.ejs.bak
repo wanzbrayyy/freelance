@@ -1,6 +1,5 @@
 <!-- views/partials/head.ejs -->
 <meta charset="UTF-8">
-<meta name="google-adsense-account" content="ca-pub-9198935842866616">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><%= title || 'Job Freelance' %></title>
 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
