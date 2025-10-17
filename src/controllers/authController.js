@@ -31,18 +31,20 @@ exports.postRegister = async (req, res) => {
         }
 
         const user = await User.create({
-            username,
-            email,
-            password,
-            role: role || 'user'
-        });
+    username,
+    email,
+    password,
+    role: role || 'freelancer'
+});
+
+
 
         const token = createToken(user._id, user.role);
         res.cookie('jwt', token, { httpOnly: true, maxAge: 3600000 });
         res.redirect(`/dashboard/${user.role}`);
-    } catch (err) {
-        console.error('Error Register:', err);
-        let errorMessage = 'Registrasi gagal. Coba lagi.';
+    } } catch (err) {
+    console.error('Error Register:', err.message, err.stack);
+    let errorMessage = `Registrasi gagal: ${err.message}`;
         if (err.name === 'ValidationError') {
             errorMessage = Object.values(err.errors).map(val => val.message).join(', ');
         }
