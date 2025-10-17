@@ -47,7 +47,7 @@ exports.authorize = (...roles) => {
 exports.setUserLocals = async (req, res, next) => {
     if (req.cookies.jwt) {
         try {
-            const decoded = jwt.verify(req.cookies.jwt, "wkaoaowkwjenrbrnrejjwwkkw");
+            const decoded = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET);
             const currentUser = await User.findById(decoded.id).select('-password');
             if (currentUser && currentUser.isActive) {
                 res.locals.currentUser = currentUser;
