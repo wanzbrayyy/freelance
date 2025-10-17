@@ -1,47 +1,26 @@
+// src/controllers/authController.js
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 
-// Buat token JWT
-const createToken = (userId, role) => {
-    return jwt.sign(
-        { id: userId, role },
-        process.env.JWT_SECRET || "wkaoaowkwjenrbrnrejjwwkkw",
-        { expiresIn: '1h' }
-    );
-};
-
-// ===== HALAMAN REGISTER =====
 exports.getRegister = (req, res) => {
     res.render('auth/register', {
-        title: 'Daftar Akun Baru',
-        error: req.query.error || null
+        title: 'Daftar Akun Baru', error: req.query.error
     });
 };
 
-// ===== PROSES REGISTER =====
 exports.postRegister = async (req, res) => {
     const { username, email, password, role } = req.body;
     try {
         const existingUser = await User.findOne({ $or: [{ username }, { email }] });
         if (existingUser) {
-            let errorMessage = existingUser.username === username
-                ? 'Username sudah digunakan.'
-                : 'Email sudah terdaftar.';
+            let errorMessage = existingUser.username === username ? 'Username sudah digunakan.' : 'Email sudah terdaftar.';
             return res.redirect(`/auth/register?error=${encodeURIComponent(errorMessage)}`);
         }
-
-        const user = await User.create({
-            username,
-            email,
-            password,
-            role: role || 'user'
-        });
-
-        const token = createToken(user._id, user.role);
+        const user = await User.create({ username, email, password, role });
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.cookie('jwt', token, { httpOnly: true, maxAge: 3600000 });
         res.redirect(`/dashboard/${user.role}`);
     } catch (err) {
-        console.error('Error Register:', err);
         let errorMessage = 'Registrasi gagal. Coba lagi.';
         if (err.name === 'ValidationError') {
             errorMessage = Object.values(err.errors).map(val => val.message).join(', ');
@@ -50,47 +29,33 @@ exports.postRegister = async (req, res) => {
     }
 };
 
-// ===== HALAMAN LOGIN =====
 exports.getLogin = (req, res) => {
     res.render('auth/login', {
-        title: 'Masuk ke Akun Anda',
-        error: req.query.error || null
+        title: 'Masuk ke Akun Anda', error: req.query.error
     });
 };
 
-// ===== PROSES LOGIN =====
 exports.postLogin = async (req, res) => {
     const { email, password } = req.body;
-
     if (!email || !password) {
         return res.redirect('/auth/login?error=Email dan password wajib diisi.');
     }
-
     try {
         const user = await User.findOne({ email }).select('+password');
-        if (!user) {
+        if (!user || !(await user.comparePassword(password))) {
             return res.redirect('/auth/login?error=Email atau password salah.');
         }
-
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            return res.redirect('/auth/login?error=Email atau password salah.');
-        }
-
         if (!user.isActive) {
-            return res.redirect('/auth/login?error=Akun Anda telah dinonaktifkan.');
+             return res.redirect('/auth/login?error=Akun Anda telah dinonaktifkan.');
         }
-
-        const token = createToken(user._id, user.role);
+        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.cookie('jwt', token, { httpOnly: true, maxAge: 3600000 });
         res.redirect(`/dashboard/${user.role}`);
     } catch (err) {
-        console.error('Error Login:', err);
         res.redirect('/auth/login?error=Login gagal. Coba lagi.');
     }
 };
 
-// ===== LOGOUT =====
 exports.postLogout = (req, res) => {
     res.clearCookie('jwt');
     res.redirect('/');
