@@ -1,0 +1,956 @@
+/* public/css/style.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+
+:root {
+    --primary-color: #00bcd4; /* Cyan Terang */
+    --secondary-color: #6c757d; /* Abu-abu netral */
+    --tertiary-color: #1f4068; /* Biru gelap */
+    --background-dark: #1a1a2e;
+    --text-light: #e0e0e0;
+    --text-dark: #333;
+    --glass-background: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --border-radius: 15px;
+    --shadow-light: rgba(0, 0, 0, 0.2);
+    --success-color: #4CAF50;
+    --error-color: #f44336;
+    --warning-color: #ffc107;
+}
+
+/* Base Styles */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-light);
+    background: var(--background-dark) url('/images/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+}
+a { color: var(--primary-color); text-decoration: none; transition: color 0.3s; }
+a:hover { color: #fff; }
+
+/* Glass Effect */
+.glass-effect {
+    background: var(--glass-background);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 30px var(--shadow-light);
+    padding: 2rem;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.btn-primary { background-color: var(--primary-color); color: var(--background-dark); }
+.btn-primary:hover { background-color: #fff; transform: translateY(-2px); }
+.btn-secondary { background-color: transparent; color: var(--text-light); border: 1px solid var(--primary-color); }
+.btn-secondary:hover { background-color: var(--primary-color); color: var(--background-dark); }
+.btn-tertiary { background-color: transparent; color: var(--text-light); border: 1px solid var(--secondary-color); }
+.btn-tertiary:hover { background-color: var(--secondary-color); color: #fff; }
+.btn-danger { background-color: var(--error-color); color: #fff; }
+.btn-danger:hover { background-color: #d32f2f; }
+
+/* Forms */
+.form-group { margin-bottom: 1.5rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+.form-group input, .form-group textarea, .form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text-light);
+    font-size: 1rem;
+}
+.form-group input::placeholder { color: var(--secondary-color); }
+.error-message { color: var(--error-color); margin-top: 1rem; text-align: center; }
+
+/* Main Header */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 10px;
+    margin: 10px;
+    z-index: 1000;
+}
+.logo-link { display: flex; align-items: center; gap: 0.5rem; }
+.header-logo { height: 40px; }
+.logo-text { font-size: 1.5rem; font-weight: 600; }
+.main-nav ul { list-style: none; display: flex; gap: 1.5rem; }
+.header-right { display: flex; align-items: center; gap: 1rem; }
+
+/* User Menu Dropdown */
+.user-menu { position: relative; }
+.user-avatar-small { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.dropdown-menu {
+    position: absolute;
+    top: 120%;
+    right: 0;
+    min-width: 200px;
+    display: none;
+    flex-direction: column;
+    padding: 1rem;
+}
+.user-menu:hover .dropdown-menu { display: flex; }
+.dropdown-menu a, .dropdown-item-btn {
+    color: var(--text-light);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.dropdown-menu a:hover, .dropdown-item-btn:hover { background-color: var(--tertiary-color); }
+
+/* Homepage Hero */
+.hero-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 2rem;
+}
+.hero-content { text-align: center; max-width: 800px; }
+.hero-content h1 { font-size: 3rem; margin-bottom: 1rem; }
+.hero-content p { font-size: 1.2rem; margin-bottom: 2rem; }
+.search-bar { display: flex; margin-bottom: 1.5rem; }
+.search-bar input { flex-grow: 1; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.search-bar button { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+
+/* Dashboard */
+.dashboard-body { background: var(--background-dark); }
+.dashboard-wrapper { display: flex; }
+.dashboard-sidebar {
+    width: 280px;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar-nav ul { list-style: none; }
+.sidebar-nav li a, .btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    color: var(--text-light);
+    transition: background-color 0.3s;
+}
+.sidebar-nav li.active a, .sidebar-nav li a:hover, .btn-logout:hover {
+    background-color: var(--tertiary-color);
+    color: #fff;
+}
+.btn-logout { width: 100%; border: none; cursor: pointer; font-size: 1rem; }
+.sidebar-user-info { margin-top: auto; text-align: center; }
+.user-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; }
+
+/* Online Status Toggle */
+.online-toggle { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.5rem; }
+.status-indicator { width: 10px; height: 10px; border-radius: 50%; }
+.status-indicator.online { background-color: var(--success-color); }
+.status-indicator.offline { background-color: var(--secondary-color); }
+.switch { position: relative; display: inline-block; width: 34px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--primary-color); }
+input:checked + .slider:before { transform: translateX(14px); }
+
+/* Main Content */
+.dashboard-main-content { margin-left: 280px; padding: 2rem; width: calc(100% - 280px); }
+.dashboard-header { margin-bottom: 2rem; }
+.dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+.card { padding: 1.5rem; }
+.grid-span-2 { grid-column: span 2; }
+.notifications-card ul { list-style: none; }
+.notifications-card li { padding: 0.5rem 0; border-bottom: 1px solid var(--glass-border); }
+
+/* Profile Page */
+.profile-header { display: flex; align-items: center; gap: 2rem; margin-bottom: 2rem; }
+.profile-avatar { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-color); }
+.profile-info h2 { font-size: 2.5rem; }
+.skills-list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.skill-tag { background-color: var(--tertiary-color); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; }
+.portfolio-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; border-bottom: 1px solid var(--glass-border); }
+.portfolio-thumbnail { width: 100px; height: 70px; background-size: cover; background-position: center; border-radius: 8px; }
+
+/* Modals */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+}
+.modal-content { max-width: 500px; width: 90%; }
+
+/* public/css/style.css */
+/* ... (semua kode CSS Anda yang sudah ada sebelumnya) ... */
+
+
+/* =================================== */
+/* Job List Page Specific Layout */
+/* =================================== */
+.main-content-container {
+    padding: 1rem;
+}
+
+.page-header {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem; /* Beri sedikit padding agar tidak terlalu mepet */
+}
+
+.job-list-container {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start; /* Jaga agar item atasnya sejajar */
+}
+
+.filters-sidebar {
+    flex: 1; /* Ambil 1 bagian dari ruang */
+    max-width: 350px; /* Batasi lebar maksimal di desktop */
+    position: sticky; /* Tetap terlihat saat scroll di desktop */
+    top: 90px; /* Jarak dari atas, sesuaikan dengan tinggi header */
+}
+
+.job-list-main {
+    flex: 3; /* Ambil 3 bagian dari ruang, membuatnya lebih lebar */
+}
+
+.job-card {
+    margin-bottom: 1.5rem;
+}
+
+
+/* =================================== */
+/*      RESPONSIVE DESIGN (MOBILE)     */
+/* =================================== */
+
+/* Aturan untuk layar dengan lebar 992px atau kurang (Tablet & HP) */
+@media (max-width: 992px) {
+
+    /* Tata Letak Utama Dashboard */
+    .dashboard-wrapper {
+        flex-direction: column; /* Ubah dari sampingan menjadi atas-bawah */
+    }
+
+    .dashboard-sidebar {
+        position: relative; /* Hapus 'fixed' position */
+        width: 100%;
+        min-height: auto; /* Tinggi menyesuaikan konten */
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .dashboard-main-content {
+        margin-left: 0; /* Hapus margin kiri dari sidebar */
+        width: 100%;
+        padding: 1.5rem;
+    }
+
+    .grid-span-2 {
+        grid-column: span 1; /* Buat semua card menjadi 1 kolom */
+    }
+
+    /* TATA LETAK HALAMAN /JOBS (SESUAI SCREENSHOT ANDA) */
+    .job-list-container {
+        flex-direction: column; /* Ubah dari sampingan menjadi atas-bawah */
+    }
+
+    .filters-sidebar {
+        max-width: 100%; /* Lebar penuh */
+        position: static; /* Hapus 'sticky' position di mobile */
+    }
+}
+
+/* Aturan untuk layar dengan lebar 768px atau kurang (HP) */
+@media (max-width: 768px) {
+    /* Sembunyikan Navigasi di Header */
+    .main-header {
+        padding: 1rem 1.5rem;
+    }
+    
+    .main-nav, .header-right .btn {
+        display: none; /* Sembunyikan menu navigasi dan tombol login/register */
+    }
+
+    /* Tampilkan Hamburger Menu (perlu ditambahkan di EJS) */
+    .hamburger-menu {
+        display: block; /* Tampilkan ikon hamburger */
+    }
+
+    /* Perkecil font di HP */
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+    .profile-info h2 {
+        font-size: 2rem;
+    }
+}
+
+/* CSS untuk Hamburger Menu (awalnya disembunyikan) */
+.hamburger-menu {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 1001;
+}
+/* public/css/style.css */
+/* ... (kode CSS lainnya) ... */
+
+/* Table Styles for Proposals/Jobs */
+.content-table { padding: 1.5rem; }
+.content-table table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+.content-table th, .content-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--glass-border);
+}
+.content-table th { font-weight: 600; }
+.content-table td a.btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
+.content-table tr:last-child td { border-bottom: none; }
+.content-table .status-pending { color: var(--warning-color); }
+.content-table .status-accepted, .content-table .status-completed, .content-table .status-inprogress { color: var(--success-color); }
+.content-table .status-rejected, .content-table .status-cancelled { color: var(--error-color); }
+
+/* Chat Page Styles */
+.chat-container {
+    display: flex;
+    height: calc(100vh - 120px); /* Sesuaikan tinggi sesuai kebutuhan */
+    padding: 0;
+}
+.chat-sidebar {
+    width: 30%;
+    border-right: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+}
+.chat-search { padding: 1rem; }
+.chat-search input { width: 100%; }
+.conversation-list { list-style: none; overflow-y: auto; }
+.conversation-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    cursor: pointer;
+    gap: 1rem;
+}
+.conversation-item:hover, .conversation-item.active { background-color: var(--tertiary-color); }
+.conversation-item img { width: 50px; height: 50px; border-radius: 50%; }
+.conversation-info { display: flex; flex-direction: column; }
+.conversation-preview { font-size: 0.8rem; color: var(--secondary-color); }
+.chat-main {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+}
+.chat-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.chat-messages { flex-grow: 1; padding: 1rem; overflow-y: auto; }
+.chat-input-form {
+    padding: 1rem;
+    display: flex;
+    border-top: 1px solid var(--glass-border);
+}
+.chat-input-form input { flex-grow: 1; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.chat-input-form button { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+
+/* Settings Page Styles */
+.settings-container { display: grid; gap: 1.5rem; }
+.form-group.switch-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* public/css/style.css */
+/* ... (di dalam bagian Chat Page Styles) ... */
+
+.message-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;  /* <-- TAMBAHKAN BARIS INI */
+    flex-shrink: 0;     /* Mencegah gambar menyusut */
+}
+
+/* public/css/style.css */
+/* ... (bisa diletakkan di bagian Page-Specific Styles atau di bawah) ... */
+
+/* Job Detail Page Specific Styles */
+.job-detail-sidebar .client-info {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.client-avatar {
+    width: 80px;            /* Atur lebar */
+    height: 80px;           /* Atur tinggi (sama dengan lebar) */
+    border-radius: 50%;     /* Membuatnya bulat */
+    object-fit: cover;      /* <-- KUNCI PERBAIKAN: Memotong gambar agar pas tanpa distorsi */
+    margin-bottom: 1rem;
+    border: 2px solid var(--primary-color);
+}
+/* Pastikan kelas-kelas ini sudah ada atau tambahkan properti yang hilang */
+
+.user-avatar-small { /* Untuk di header */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover; /* <-- Pastikan ada */
+}
+
+.user-avatar { /* Untuk di sidebar dashboard */
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover; /* <-- Pastikan ada */
+    margin-bottom: 1rem;
+}
+
+.profile-avatar { /* Untuk di halaman profil utama */
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover; /* <-- Pastikan ada */
+    border: 3px solid var(--primary-color);
+}
+
+.proposal-avatar { /* Untuk di daftar proposal */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover; /* <-- Pastikan ada */
+}
+
+.conversation-item img { /* Untuk di daftar percakapan chat */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover; /* <-- Pastikan ada */
+}
+
+/* public/css/style.css (Lengkap dengan perbaikan logo header) */
+/* =================================== */
+/*  IMPORTS & ROOT VARIABLES           */
+/* =================================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+
+:root {
+    --primary-color: #00bcd4;
+    --secondary-color: #6c757d;
+    --tertiary-color: #1f4068;
+    --background-dark: #1a1a2e;
+    --text-light: #e0e0e0;
+    --glass-background: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --border-radius: 15px;
+    --shadow-light: rgba(0, 0, 0, 0.2);
+    --success-color: #4CAF50;
+    --error-color: #f44336;
+    --warning-color: #ffc107;
+}
+
+/* =================================== */
+/*  BASE & GENERAL STYLES              */
+/* =================================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-light);
+    background: var(--background-dark) url('/images/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+}
+a { color: var(--primary-color); text-decoration: none; transition: color 0.3s; }
+a:hover { color: #fff; }
+
+/* =================================== */
+/*  UTILITY & COMPONENT STYLES         */
+/* =================================== */
+.glass-effect {
+    background: var(--glass-background); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-radius: var(--border-radius); border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 30px var(--shadow-light); padding: 2rem;
+}
+.btn {
+    padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-size: 1rem;
+    font-weight: 500; cursor: pointer; transition: all 0.3s ease;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.btn-primary { background-color: var(--primary-color); color: var(--background-dark); }
+.btn-primary:hover { background-color: #fff; transform: translateY(-2px); }
+.btn-secondary { background-color: transparent; color: var(--text-light); border: 1px solid var(--primary-color); }
+.btn-secondary:hover { background-color: var(--primary-color); color: var(--background-dark); }
+.form-group { margin-bottom: 1.5rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+.form-group input, .form-group textarea, .form-group select {
+    width: 100%; padding: 0.75rem; background: rgba(0,0,0,0.2);
+    border: 1px solid var(--glass-border); border-radius: 8px;
+    color: var(--text-light); font-size: 1rem;
+}
+.error-message { color: var(--error-color); margin-top: 1rem; text-align: center; }
+
+/* =================================== */
+/*  AVATAR & LOGO STYLES (DENGAN PERBAIKAN) */
+/* =================================== */
+.user-avatar-small, .user-avatar, .profile-avatar, .proposal-avatar, .conversation-item img, .message-avatar, .client-avatar, .header-logo {
+    border-radius: 50%; /* Membuat semua elemen ini bulat */
+    object-fit: cover; /* Mencegah gambar gepeng/distorsi */
+    flex-shrink: 0;
+}
+.header-logo {
+    height: 40px;
+    width: 40px; /* Lebar dan tinggi harus sama untuk lingkaran sempurna */
+    border: 2px solid var(--primary-color); /* Border opsional agar lebih menonjol */
+}
+.user-avatar-small { width: 40px; height: 40px; }
+.user-avatar { width: 80px; height: 80px; margin-bottom: 1rem; }
+.profile-avatar { width: 150px; height: 150px; border: 3px solid var(--primary-color); }
+.proposal-avatar { width: 50px; height: 50px; }
+.conversation-item img { width: 50px; height: 50px; }
+.message-avatar { width: 35px; height: 35px; }
+.client-avatar { width: 80px; height: 80px; border: 2px solid var(--primary-color); margin-bottom: 1rem; }
+
+/* =================================== */
+/*  MAIN LAYOUT & HEADER/FOOTER        */
+/* =================================== */
+.main-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; position: sticky; top: 10px; margin: 10px; z-index: 1000; }
+.logo-link { display: flex; align-items: center; gap: 0.75rem; }
+.logo-text { font-size: 1.5rem; font-weight: 600; }
+.main-nav ul { list-style: none; display: flex; gap: 1.5rem; }
+.header-right { display: flex; align-items: center; gap: 1rem; }
+.user-menu { position: relative; }
+.dropdown-menu { position: absolute; top: 120%; right: 0; min-width: 200px; display: none; flex-direction: column; padding: 1rem; }
+.user-menu:hover .dropdown-menu { display: flex; }
+.dropdown-menu a, .dropdown-item-btn {
+    color: var(--text-light); padding: 0.75rem 1rem; border-radius: 8px;
+    transition: background-color 0.3s; background: none; border: none;
+    cursor: pointer; text-align: left; width: 100%;
+    display: flex; align-items: center; gap: 0.5rem;
+}
+.dropdown-menu a:hover, .dropdown-item-btn:hover { background-color: var(--tertiary-color); }
+.hamburger-menu { display: none; background: none; border: none; color: var(--text-light); font-size: 1.5rem; cursor: pointer; z-index: 1001; }
+.main-footer { margin: 10px; padding: 2rem; }
+
+/* =================================== */
+/*  PAGE-SPECIFIC DESKTOP STYLES       */
+/* =================================== */
+/* Dashboard */
+.dashboard-body { background: var(--background-dark); }
+.dashboard-wrapper { display: flex; }
+.dashboard-sidebar { width: 280px; min-height: 100vh; position: fixed; top: 0; left: 0; padding: 1.5rem; display: flex; flex-direction: column; }
+.sidebar-nav ul { list-style: none; }
+.sidebar-nav li a, .btn-logout { display: flex; align-items: center; gap: 1rem; padding: 1rem; margin-bottom: 0.5rem; border-radius: 8px; color: var(--text-light); transition: background-color 0.3s; }
+.sidebar-nav li.active a, .sidebar-nav li a:hover, .btn-logout:hover { background-color: var(--tertiary-color); color: #fff; }
+.btn-logout { width: 100%; border: none; cursor: pointer; font-size: 1rem; }
+.dashboard-main-content { margin-left: 280px; padding: 2rem; width: calc(100% - 280px); }
+.dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+.grid-span-2 { grid-column: span 2; }
+
+/* Job List Page (DESKTOP LAYOUT) */
+.main-content-container { padding: 1rem; }
+.page-header { margin-bottom: 1.5rem; padding: 1.5rem; }
+.job-list-container { display: flex; gap: 1.5rem; align-items: flex-start; }
+.filters-sidebar { flex: 1; max-width: 350px; position: sticky; top: 90px; }
+.job-list-main { flex: 3; }
+.job-card { margin-bottom: 1.5rem; }
+.job-detail-sidebar .client-info { text-align: center; padding: 1rem 0; }
+
+/* Chat Page Styles */
+.chat-container { display: flex; height: calc(100vh - 120px); padding: 0; }
+.chat-sidebar { width: 30%; border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; }
+.chat-main { width: 70%; display: flex; flex-direction: column; }
+.chat-messages { display: flex; flex-direction: column; gap: 1rem; flex-grow: 1; padding: 1rem; overflow-y: auto; }
+.chat-message { display: flex; align-items: flex-end; gap: 0.75rem; max-width: 75%; }
+.message-bubble { padding: 0.75rem 1rem; border-radius: var(--border-radius); line-height: 1.5; }
+.chat-message.received { align-self: flex-start; }
+.chat-message.received .message-bubble { background-color: var(--tertiary-color); border-bottom-left-radius: 4px; }
+.chat-message.sent { align-self: flex-end; }
+.chat-message.sent .message-bubble { background-color: var(--primary-color); color: var(--background-dark); border-bottom-right-radius: 4px; }
+
+/* =================================== */
+/*  RESPONSIVE DESIGN (WAJIB DI AKHIR) */
+/* =================================== */
+@media (max-width: 992px) {
+    .dashboard-wrapper { flex-direction: column; }
+    .dashboard-sidebar { position: relative; width: 100%; min-height: auto; }
+    .dashboard-main-content { margin-left: 0; width: 100%; padding: 1.5rem; }
+    .grid-span-2 { grid-column: span 1; }
+    .job-list-container { flex-direction: column; }
+    .filters-sidebar { max-width: 100%; position: static; }
+    .chat-container { flex-direction: column; height: auto; }
+    .chat-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--glass-border); }
+    .chat-main { width: 100%; }
+}
+@media (max-width: 768px) {
+    .main-header { padding: 1rem 1.5rem; }
+    .main-nav, .header-right .btn { display: none; }
+    .hamburger-menu { display: block; }
+}
+.hero-content { text-align: center; max-width: 800px; }
+.hero-content h1 { font-size: 3rem; margin-bottom: 1rem; }
+.hero-content p { font-size: 1.2rem; margin-bottom: 2rem; }
+.search-bar { display: flex; margin-bottom: 1.5rem; }
+.search-bar input { flex-grow: 1; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.search-bar button { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.user-avatar-small, .user-avatar, .profile-avatar, .proposal-avatar, .conversation-item img, .message-avatar, .client-avatar, .header-logo, .auth-logo, .logo-small {
+    border-radius: 50%; /* Membuat semua elemen ini bulat */
+    object-fit: cover; /* Mencegah gambar gepeng/distorsi */
+    flex-shrink: 0;
+}
+/* TAMBAHKAN DUA BLOK INI */
+.auth-logo {
+    height: 80px; /* Ukuran lebih besar untuk halaman login */
+    width: 80px;
+    margin-bottom: 1rem;
+    border: 2px solid var(--primary-color);
+}
+
+.logo-small { /* Untuk di sidebar dashboard */
+    height: 40px;
+    width: 40px;
+    border: 2px solid var(--primary-color);
+}
+/* public/css/style.css */
+/* ... (HAPUS SEMUA CSS LAMA DARI .chat-container HINGGA AKHIR BAGIAN CHAT) ... */
+/* ... DAN GANTI DENGAN BLOK DI BAWAH INI ... */
+
+/* =================================== */
+/*  CHAT PAGE STYLES (KEREN & BARU)    */
+/* =================================== */
+.chat-container {
+    display: flex;
+    height: calc(100vh - 120px); /* Ketinggian penuh dikurangi padding/margin */
+    padding: 0;
+    flex-direction: column; /* Default untuk mobile */
+}
+
+/* Sidebar Daftar Percakapan */
+.chat-sidebar {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--glass-border);
+    background: rgba(0, 0, 0, 0.1); /* Latar sedikit lebih gelap */
+    overflow-y: auto;
+}
+.conversation-list { list-style: none; }
+.conversation-item {
+    display: flex; align-items: center; padding: 1rem;
+    cursor: pointer; gap: 1rem; transition: background-color 0.2s ease;
+    border-bottom: 1px solid var(--glass-border);
+}
+.conversation-item:hover { background-color: rgba(255, 255, 255, 0.05); }
+.conversation-item.active { background-color: var(--tertiary-color); }
+.conversation-info { overflow: hidden; }
+.conversation-preview {
+    font-size: 0.8rem; color: var(--secondary-color);
+    white-space: nowrap; text-overflow: ellipsis; overflow: hidden;
+}
+
+/* Jendela Chat Utama */
+.chat-main {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Mengisi sisa ruang */
+}
+.chat-header {
+    padding: 1rem 1.5rem; border-bottom: 1px solid var(--glass-border);
+    display: flex; align-items: center; gap: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+}
+.chat-header h3 { font-weight: 500; }
+
+/* Area Pesan */
+.chat-messages {
+    flex-grow: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem; /* Jarak kecil antar bubble */
+}
+.chat-placeholder {
+    margin: auto; text-align: center; color: var(--secondary-color);
+}
+.chat-placeholder i { font-size: 4rem; margin-bottom: 1rem; }
+
+/* Elemen Pesan Individual */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.chat-message {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75rem;
+    max-width: 75%;
+    animation: fadeInUp 0.3s ease-out;
+}
+.message-content {
+    display: flex;
+    flex-direction: column;
+}
+.message-bubble {
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+.message-timestamp {
+    font-size: 0.7rem;
+    color: var(--secondary-color);
+    margin-top: 0.25rem;
+}
+
+/* ==== INI BAGIAN KANAN-KIRI ==== */
+/* Pesan Diterima (KIRI) */
+.chat-message.received {
+    align-self: flex-start;
+}
+.chat-message.received .message-bubble {
+    background-color: var(--tertiary-color);
+    border-bottom-left-radius: 4px;
+}
+.chat-message.received .message-timestamp {
+    text-align: left;
+    margin-left: 0.25rem;
+}
+
+/* Pesan Terkirim (KANAN) */
+.chat-message.sent {
+    align-self: flex-end;
+    flex-direction: row-reverse; /* Balik urutan: bubble dulu, baru avatar */
+}
+.chat-message.sent .message-bubble {
+    background-color: var(--primary-color);
+    color: var(--background-dark);
+    border-bottom-right-radius: 4px;
+}
+.chat-message.sent .message-timestamp {
+    text-align: right;
+    margin-right: 0.25rem;
+}
+
+/* Form Input Pesan */
+.chat-input-form {
+    padding: 1rem; display: flex;
+    border-top: 1px solid var(--glass-border);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Tata Letak untuk Desktop */
+@media (min-width: 993px) {
+    .chat-container {
+        flex-direction: row; /* Kembali ke sampingan di desktop */
+    }
+    .chat-sidebar {
+        flex-basis: 350px; /* Lebar tetap untuk sidebar */
+        flex-shrink: 0;
+    }
+}
+
+/* public/css/style.css */
+/* ... (di bawah aturan .dropdown-menu a:hover) ... */
+
+/* Notification Bell Styles */
+.notification-bell {
+    position: relative;
+    font-size: 1.2rem;
+}
+.notification-icon {
+    color: var(--text-light);
+    position: relative;
+    display: block;
+    padding: 0.5rem;
+}
+.notification-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 18px;
+    height: 18px;
+    background-color: var(--error-color);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid var(--background-dark);
+}
+.notification-dropdown {
+    min-width: 350px;
+    padding: 0; /* Hapus padding default */
+    display: none;
+}
+.notification-bell:hover .notification-dropdown {
+    display: block;
+}
+.notification-header, .notification-footer {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.1);
+}
+.notification-header span { font-weight: 600; }
+.notification-header a, .notification-footer a { font-size: 0.8rem; }
+.notification-list { list-style: none; max-height: 300px; overflow-y: auto; }
+.notification-item a {
+    display: block;
+    padding: 1rem;
+    color: var(--text-light);
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 0.9rem;
+}
+.notification-item.unread a {
+    background-color: rgba(0, 188, 212, 0.1); /* Warna primer dengan transparansi */
+}
+.notification-item a:hover {
+    background-color: var(--tertiary-color);
+}
+.notification-time {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--secondary-color);
+    margin-top: 0.25rem;
+}
+
+/* Penambahan untuk Halaman Settings */
+.telegram-connected, .telegram-disconnected {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.75rem; border-radius: 8px; margin-top: 1rem;
+}
+.telegram-connected { background-color: rgba(76, 175, 80, 0.2); }
+.telegram-disconnected { background-color: rgba(244, 67, 54, 0.2); }
+.icon.success { color: var(--success-color); }
+.icon.error { color: var(--error-color); }
+
+/* public/css/style.css */
+
+/* MODIFIKASI HEADER UTAMA */
+.main-header { padding: 0; }
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem; /* Kembalikan padding ke sini */
+}
+
+/* MODIFIKASI di bawah @media (max-width: 768px) */
+@media (max-width: 768px) {
+    .header-content {
+        padding: 1rem 1.5rem;
+    }
+
+    .nav-wrapper {
+        position: fixed;
+        top: 0;
+        left: -100%; /* Sembunyikan di luar layar */
+        width: 100%;
+        height: 100vh;
+        background-color: var(--background-dark);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: left 0.3s ease-in-out;
+        z-index: 1000;
+    }
+    .nav-wrapper.active {
+        left: 0; /* Tampilkan saat aktif */
+    }
+    .main-nav ul {
+        flex-direction: column;
+        text-align: center;
+        font-size: 1.5rem;
+    }
+    .header-right {
+        flex-direction: column;
+        margin-top: 2rem;
+    }
+    .hamburger-menu {
+        display: block;
+        z-index: 1001; /* Pastikan di atas nav-wrapper */
+    }
+}
+/* CSS untuk halaman notifikasi */
+.notifications-page-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.notification-page-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: var(--glass-background);
+    border-radius: var(--border-radius);
+    border-left: 5px solid var(--secondary-color);
+    transition: transform 0.2s ease;
+}
+.notification-page-item:hover {
+    transform: translateY(-3px);
+}
+.notification-page-item.unread {
+    border-left-color: var(--primary-color);
+    background: rgba(0, 188, 212, 0.05);
+}
+.notification-page-item .icon {
+    font-size: 2rem;
+    padding: 1rem;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.notification-page-item .icon.proposal { color: #2196F3; background: rgba(33, 150, 243, 0.1); }
+.notification-page-item .icon.message { color: #9C27B0; background: rgba(156, 39, 176, 0.1); }
+.notification-page-item .icon.completed { color: #4CAF50; background: rgba(76, 175, 80, 0.1); }
+.notification-page-item .icon.review { color: #FFC107; background: rgba(255, 193, 7, 0.1); }

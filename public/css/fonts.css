@@ -1,0 +1,22 @@
+/* public/css/fonts.css */
+
+/*
+ * 1. Impor font dari layanan seperti Google Fonts.
+ *    Pilih bobot (weight) yang Anda butuhkan untuk mengurangi ukuran file.
+ *    Di sini kita menggunakan 'Poppins' yang sesuai dengan desain cinematic UI.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+
+/*
+ * 2. Setelah membuat file ini, Anda perlu mengimpornya di baris paling atas
+ *    dari file `style.css` Anda dengan menambahkan kode berikut:
+ *
+ *    @import url('fonts.css');
+ *
+ * 3. Sekarang Anda bisa menggunakan font 'Poppins' di seluruh `style.css`, misalnya:
+ *
+ *    body {
+ *        font-family: 'Poppins', sans-serif;
+ *    }
+ */

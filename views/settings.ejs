@@ -1,0 +1,83 @@
+<!-- views/settings.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { title: 'Pengaturan' }) %>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrapper">
+        <%- include('partials/sidebar', { user: currentUser, active: 'settings' }) %>
+        <main class="dashboard-main-content">
+            <div class="page-header glass-effect">
+                <h1><i class="fas fa-cog icon"></i> Pengaturan Akun</h1>
+                <p>Kelola informasi akun dan preferensi Anda di sini.</p>
+            </div>
+            <div class="settings-container">
+                <div class="card glass-effect">
+                    <h3><i class="fab fa-telegram-plane icon"></i> Notifikasi Telegram</h3>
+                    <p>Hubungkan akun Anda ke bot Telegram kami untuk menerima notifikasi instan tentang pesan baru, proposal, dan update pekerjaan.</p>
+                    <div id="telegram-status">
+                        <% if (currentUser.telegramId) { %>
+                            <div class="telegram-connected">
+                                <i class="fas fa-check-circle icon success"></i> Terhubung sebagai ID: <strong><%= currentUser.telegramId %></strong>
+                            </div>
+                            <button class="btn btn-secondary" id="disconnectTelegramBtn">Putuskan Hubungan</button>
+                        <% } else { %>
+                            <div class="telegram-disconnected">
+                                <i class="fas fa-times-circle icon error"></i> Belum Terhubung
+                            </div>
+                            <a href="https://t.me/wanzofc_support_Bot?start=<%= currentUser._id %>" target="_blank" class="btn btn-primary" style="margin-top: 1rem;">Hubungkan ke Telegram</a>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="card glass-effect">
+                    <h3>Ubah Password</h3>
+                    <form id="changePasswordForm">
+                        <div class="form-group">
+                            <label for="currentPassword">Password Saat Ini</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">Password Baru</label>
+                            <input type="password" id="newPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmNewPassword">Konfirmasi Password Baru</label>
+                            <input type="password" id="confirmNewPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan Password Baru</button>
+                    </form>
+                </div>
+                 <div class="card glass-effect">
+                    <h3>Tindakan Akun</h3>
+                     <p>Menonaktifkan akun Anda akan menyembunyikan profil Anda dan mencegah Anda login.</p>
+                     <button class="btn btn-danger" id="deactivateAccountBtn" style="margin-top: 1rem;">
+                        <i class="fas fa-user-slash"></i> Nonaktifkan Akun Saya
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/js/main.js"></script>
+    <script>
+        document.getElementById('deactivateAccountBtn')?.addEventListener('click', async () => {
+            if (confirm('Apakah Anda YAKIN ingin menonaktifkan akun Anda? Anda tidak akan bisa login kembali.')) {
+                try {
+                    const response = await fetch('/users/deactivate', { method: 'POST' });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert(result.message);
+                        window.location.href = '/auth/logout-action';
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                } catch (error) {
+                    alert('Gagal menonaktifkan akun. Silakan coba lagi.');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

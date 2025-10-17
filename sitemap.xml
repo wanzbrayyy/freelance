@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+   <url>
+      <loc>https://wanzofc.site/</loc>
+      <lastmod>2023-10-27T10:00:00+00:00</lastmod>
+      <priority>1.0</priority>
+      <changefreq>daily</changefreq>
+   </url>
+   <url>
+      <loc>https://wanzofc.site/privacy-policy</loc>
+      <lastmod>2023-10-26T14:30:00+00:00</lastmod>
+      <priority>0.8</priority>
+      <changefreq>weekly</changefreq>
+   </url>
+   <url>
+      <loc>https://wanzofc.site/auth/login</loc>
+      <lastmod>2023-10-25T09:00:00+00:00</lastmod>
+      <priority>0.7</priority>
+      <changefreq>monthly</changefreq>
+   </url>
+   <!-- Tambahkan URL halaman lainnya di sini -->
+</urlset>

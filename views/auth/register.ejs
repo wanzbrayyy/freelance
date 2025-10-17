@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', { title: title }) %>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="auth-body">
+    <div class="auth-container glass-effect">
+        <div class="auth-header">
+            <img src="/images/logo.png" alt="Job Freelance Logo" class="auth-logo">
+            <h2>Daftar Akun Baru</h2>
+        </div>
+        <form action="/auth/register" method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user icon"></i> Username</label>
+                <input type="text" id="username" name="username" placeholder="Masukkan username Anda" required>
+            </div>
+            <div class="form-group">
+                <label for="email"><i class="fas fa-envelope icon"></i> Email</label>
+                <input type="email" id="email" name="email" placeholder="Masukkan email Anda" required>
+            </div>
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock icon"></i> Password</label>
+                <input type="password" id="password" name="password" placeholder="Buat password" required>
+            </div>
+            <div class="form-group">
+                <label for="role"><i class="fas fa-user-tag icon"></i> Daftar Sebagai</label>
+                <select id="role" name="role" required>
+                    <option value="">Pilih peran Anda</option>
+                    <option value="freelancer" <%= typeof role !== 'undefined' && role === 'freelancer' ? 'selected' : '' %>>Freelancer</option>
+                    <option value="client" <%= typeof role !== 'undefined' && role === 'client' ? 'selected' : '' %>>Mencari Freelancer</option>
+                </select>
+            </div>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <p class="error-message"><%= error %></p>
+            <% } %>
+            <button type="submit" class="btn btn-primary">Daftar</button>
+        </form>
+        <p class="auth-footer">Sudah punya akun? <a href="/auth/login">Masuk di sini</a></p>
+    </div>
+</body>
+</html>

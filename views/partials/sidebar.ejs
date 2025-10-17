@@ -1,0 +1,102 @@
+<!-- views/partials/sidebar.ejs (FIXED & FINAL) -->
+<aside class="dashboard-sidebar glass-effect">
+    <div class="sidebar-logo">
+        <a href="/" class="logo-link">
+            <img src="/images/logo.png" alt="JF Logo" class="logo-small">
+            <span class="logo-text">Job Freelance</span>
+        </a>
+    </div>
+
+    <% if (user && user._id) { %>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="<%= active === 'dashboard' ? 'active' : '' %>">
+                    <a href="/dashboard/<%= user.role %>"><i class="fas fa-tachometer-alt icon"></i> Dashboard</a>
+                </li>
+                <li class="<%= active === 'profile' ? 'active' : '' %>">
+                    <a href="/users/profile/<%= user._id %>"><i class="fas fa-user-circle icon"></i> Profile</a>
+                </li>
+                <% if (user.role === 'freelancer') { %>
+                    <li class="<%= active === 'proposals' ? 'active' : '' %>">
+                        <a href="/freelancer/proposals"><i class="fas fa-file-signature icon"></i> Proposal Saya</a>
+                    </li>
+                    <li class="<%= active === 'applied-jobs' ? 'active' : '' %>">
+                        <a href="/freelancer/applied-jobs"><i class="fas fa-paper-plane icon"></i> Pekerjaan Saya</a>
+                    </li>
+                <% } %>
+                <% if (user.role === 'client') { %>
+                    <li class="<%= active === 'my-jobs' ? 'active' : '' %>">
+                        <a href="/jobs/my-posted-jobs"><i class="fas fa-briefcase icon"></i> Pekerjaan Saya</a>
+                    </li>
+                    <li class="<%= active === 'create-job' ? 'active' : '' %>">
+                        <a href="/jobs/create"><i class="fas fa-plus-circle icon"></i> Buat Pekerjaan</a>
+                    </li>
+                <% } %>
+                <li class="<%= active === 'chat' ? 'active' : '' %>">
+                    <a href="/chat"><i class="fas fa-comments icon"></i> Pesan</a>
+                </li>
+                 <li class="<%= active === 'notifications' ? 'active' : '' %>">
+                    <a href="/notifications"><i class="fas fa-bell icon"></i> Notifikasi</a>
+                </li>
+                <li class="<%= active === 'settings' ? 'active' : '' %>">
+                    <a href="/settings"><i class="fas fa-cog icon"></i> Pengaturan</a>
+                </li>
+                <li>
+                    <form action="/auth/logout" method="POST" style="display:inline;">
+                        <button type="submit" class="btn-logout"><i class="fas fa-sign-out-alt icon"></i> Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-user-info" data-user-id="<%= user._id %>">
+            <img src="<%= user.avatar || '/images/default-avatar.png' %>" alt="<%= user.username %>" class="user-avatar">
+            <div class="user-details">
+                <span class="user-name"><%= user.username %></span>
+                <% if (user.role) { %>
+                    <span class="user-role"><%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %></span>
+                <% } %>
+                <div class="online-toggle">
+                    <span class="status-indicator <%= user.onlineStatus ? 'online' : 'offline' %>"></span>
+                    <label class="switch">
+                        <input type="checkbox" id="onlineStatusToggle" <%= user.onlineStatus ? 'checked' : '' %>>
+                        <span class="slider round"></span>
+                    </label>
+                    <span id="onlineStatusText"><%= user.onlineStatus ? 'Online' : 'Offline' %></span>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</aside>
+
+<!-- Skrip untuk Toggle Status Online -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const onlineStatusToggle = document.getElementById('onlineStatusToggle');
+        if (onlineStatusToggle) {
+            onlineStatusToggle.addEventListener('change', async (event) => {
+                const onlineStatusText = document.getElementById('onlineStatusText');
+                const statusIndicator = document.querySelector('.sidebar-user-info .status-indicator');
+                const newStatus = event.target.checked;
+                try {
+                    const response = await fetch('/users/status', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: newStatus })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        onlineStatusText.textContent = newStatus ? 'Online' : 'Offline';
+                        statusIndicator.classList.toggle('online', newStatus);
+                        statusIndicator.classList.toggle('offline', !newStatus);
+                    } else {
+                        event.target.checked = !newStatus; // Kembalikan jika gagal
+                    }
+                } catch (error) {
+                    console.error('Error updating online status:', error);
+                    event.target.checked = !newStatus; // Kembalikan jika gagal
+                }
+            });
+        }
+    });
+</script>

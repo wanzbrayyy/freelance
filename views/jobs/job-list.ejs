@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', { title: title }) %>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="main-body">
+    <%- include('../partials/header') %>
+
+    <main class="main-content-container">
+        <div class="page-header glass-effect">
+            <h1><i class="fas fa-briefcase icon"></i> Temukan Pekerjaan</h1>
+            <p>Jelajahi lowongan pekerjaan yang sesuai dengan keahlian Anda.</p>
+        </div>
+
+        <div class="job-list-container">
+            <aside class="filters-sidebar glass-effect">
+                <h3><i class="fas fa-filter icon"></i> Filter</h3>
+                <form id="filterForm">
+                    <div class="form-group">
+                        <label for="filterCategory">Kategori</label>
+                        <select id="filterCategory" name="category">
+                            <option value="">Semua Kategori</option>
+                            <option value="Web Development">Web Development</option>
+                            <option value="Mobile App Development">Mobile App Development</option>
+                            <option value="UI/UX Design">UI/UX Design</option>
+                            <!-- Tambahkan kategori lain di sini -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filterBudgetMin">Budget Minimum</label>
+                        <input type="number" id="filterBudgetMin" name="budgetMin" placeholder="$">
+                    </div>
+                    <div class="form-group">
+                        <label for="filterBudgetMax">Budget Maksimum</label>
+                        <input type="number" id="filterBudgetMax" name="budgetMax" placeholder="$">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Terapkan Filter</button>
+                </form>
+            </aside>
+            <section class="job-list-main">
+                <% if (jobs && jobs.length > 0) { %>
+                    <% jobs.forEach(job => { %>
+                        <div class="job-card glass-effect">
+                            <div class="job-card-header">
+                                <h3 class="job-title"><a href="/jobs/<%= job._id %>"><%= job.title %></a></h3>
+                                <div class="job-budget">$<%= job.budget.toLocaleString() %></div>
+                            </div>
+                            <div class="job-card-body">
+                                <p class="job-description"><%= job.description.substring(0, 150) %>...</p>
+                            </div>
+                            <div class="job-card-footer">
+                                <div class="job-meta">
+                                    <span><i class="fas fa-tag icon"></i> <%= job.category %></span>
+                                    <span><i class="fas fa-clock icon"></i> Deadline: <%= new Date(job.deadline).toLocaleDateString('id-ID') %></span>
+                                </div>
+                                <a href="/jobs/<%= job._id %>" class="btn btn-secondary">Lihat Detail</a>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="no-data-card glass-effect">
+                        <i class="fas fa-search-dollar icon-large"></i>
+                        <h3>Tidak ada pekerjaan yang ditemukan</h3>
+                        <p>Coba ubah filter Anda atau periksa kembali nanti.</p>
+                    </div>
+                <% } %>
+            </section>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+    <script src="/js/main.js"></script>
+</body>
+</html>

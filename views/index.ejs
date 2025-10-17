@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { title: title }) %>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="homepage-body">
+    <%- include('partials/header') %>
+
+    <main class="hero-section">
+        <div class="hero-content glass-effect">
+            <h1>Temukan Pekerjaan Impian Anda, atau Freelancer Ideal Anda</h1>
+            <p>Jelajahi ribuan lowongan pekerjaan online atau tawarkan jasa Anda kepada klien global.</p>
+            <div class="search-bar">
+                <input type="text" placeholder="Cari pekerjaan, skill, atau freelancer...">
+                <button class="btn btn-primary"><i class="fas fa-search"></i> Cari</button>
+            </div>
+            <div class="hero-cta-buttons">
+                <a href="/jobs" class="btn btn-secondary"><i class="fas fa-briefcase"></i> Jelajahi Pekerjaan</a>
+                <a href="/auth/register?role=freelancer" class="btn btn-tertiary"><i class="fas fa-handshake"></i> Jadi Freelancer</a>
+            </div>
+        </div>
+    </main>
+
+    <section class="info-section">
+        <div class="info-card glass-effect">
+            <i class="fas fa-globe icon"></i>
+            <h3>Jaringan Global</h3>
+            <p>Terhubung dengan klien dan freelancer dari seluruh dunia.</p>
+        </div>
+        <div class="info-card glass-effect">
+            <i class="fas fa-shield-alt icon"></i>
+            <h3>Aman & Terpercaya</h3>
+            <p>Sistem pembayaran yang aman dan ulasan transparan.</p>
+        </div>
+        <div class="info-card glass-effect">
+            <i class="fas fa-chart-line icon"></i>
+            <h3>Kembangkan Karir Anda</h3>
+            <p>Temukan proyek menarik dan kembangkan portofolio Anda.</p>
+        </div>
+    </section>
+
+    <%- include('partials/footer') %>
+    <script src="/js/main.js"></script>
+</body>
+</html>

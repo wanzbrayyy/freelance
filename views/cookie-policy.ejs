@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { title: title }) %>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="main-body">
+    <%- include('partials/header') %>
+    <main class="main-content-container legal-page">
+        <div class="legal-content glass-effect">
+            <h1>Kebijakan Cookie</h1>
+            <p>Terakhir diperbarui: <%= new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+            <p><strong>PENTING:</strong> Ini adalah template kebijakan cookie. Konsultasikan dengan ahli hukum untuk memastikan kepatuhan penuh.</p>
+
+            <h2>1. Apa itu Cookie?</h2>
+            <p>Cookie adalah file teks kecil yang ditempatkan di komputer atau perangkat seluler Anda saat Anda mengunjungi situs web. Cookie digunakan secara luas untuk membuat situs web bekerja, atau bekerja lebih efisien, serta untuk memberikan informasi kepada pemilik situs.</p>
+
+            <h2>2. Bagaimana Kami Menggunakan Cookie</h2>
+            <p>Kami menggunakan cookie untuk beberapa alasan, yang dirinci di bawah ini:</p>
+            <ul>
+                <li><strong>Cookie yang Sangat Diperlukan:</strong> Cookie ini penting agar Anda dapat bergerak di sekitar situs web dan menggunakan fitur-fiturnya. Tanpa cookie ini, layanan yang Anda minta, seperti menjaga Anda tetap login (otentikasi), tidak dapat disediakan.</li>
+                <li><strong>Cookie Kinerja (Analytics):</strong> Cookie ini mengumpulkan informasi tentang bagaimana pengunjung menggunakan situs web kami, misalnya halaman mana yang paling sering dikunjungi pengunjung. Kami menggunakan data ini untuk mengoptimalkan situs web kami dan membuatnya lebih mudah dinavigasi.</li>
+                <li><strong>Cookie Fungsionalitas:</strong> Cookie ini memungkinkan situs web kami untuk mengingat pilihan yang Anda buat (seperti nama pengguna atau preferensi bahasa Anda) dan menyediakan fitur yang disempurnakan dan lebih personal.</li>
+                <li><strong>Cookie Iklan (Marketing):</strong> Cookie ini digunakan untuk menayangkan iklan yang lebih relevan bagi Anda dan minat Anda. Kami dapat menggunakan cookie ini untuk membatasi berapa kali Anda melihat iklan dan membantu mengukur efektivitas kampanye iklan (misalnya melalui Google Ads).</li>
+            </ul>
+
+            <h2>3. Cookie Pihak Ketiga</h2>
+            <p>Dalam beberapa kasus khusus, kami juga menggunakan cookie yang disediakan oleh pihak ketiga tepercaya seperti Google Analytics. Google Analytics adalah salah satu solusi analisis paling tersebar luas dan tepercaya di web untuk membantu kami memahami bagaimana Anda menggunakan situs dan cara kami dapat meningkatkan pengalaman Anda.</p>
+
+            <h2>4. Cara Mengontrol Cookie</h2>
+            <p>Anda memiliki hak untuk memutuskan apakah akan menerima atau menolak cookie. Anda dapat mengatur atau mengubah kontrol browser web Anda untuk menerima atau menolak cookie. Jika Anda memilih untuk menolak cookie, Anda mungkin masih dapat menggunakan situs web kami meskipun akses Anda ke beberapa fungsionalitas dan area mungkin dibatasi. Untuk informasi lebih lanjut tentang cara mengelola cookie, silakan merujuk ke dokumentasi bantuan browser Anda.</p>
+
+        </div>
+    </main>
+    <%- include('partials/footer') %>
+</body>
+</html>

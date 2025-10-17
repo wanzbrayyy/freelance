@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { title: title }) %>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="main-body">
+    <%- include('partials/header') %>
+    <main class="main-content-container legal-page">
+        <div class="legal-content glass-effect">
+            <h1>Kebijakan Privasi</h1>
+            <p>Terakhir diperbarui: <%= new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+
+            <h2>1. Informasi yang Kami Kumpulkan</h2>
+            <p>Kami mengumpulkan informasi yang Anda berikan langsung kepada kami, seperti saat Anda membuat akun, memperbarui profil, memposting pekerjaan, atau berkomunikasi dengan pengguna lain. Ini termasuk nama, email, skill, portofolio, dan pesan yang Anda kirim.</p>
+
+            <h2>2. Bagaimana Kami Menggunakan Informasi Anda</h2>
+            <p>Informasi Anda digunakan untuk menyediakan, memelihara, dan meningkatkan layanan kami. Ini termasuk menghubungkan freelancer dengan klien, memproses transaksi, dan mengirimkan notifikasi terkait akun Anda.</p>
+
+            <h2>3. Berbagi Informasi</h2>
+            <p>Profil Anda, termasuk nama, skill, dan portofolio, akan terlihat oleh pengguna lain di platform kami. Kami tidak membagikan informasi pribadi Anda dengan pihak ketiga untuk tujuan pemasaran tanpa persetujuan Anda.</p>
+            
+            <!-- Tambahkan bagian lain yang relevan seperti Keamanan, Cookie, Hak Anda, dll. -->
+
+        </div>
+    </main>
+    <%- include('partials/footer') %>
+</body>
+</html>

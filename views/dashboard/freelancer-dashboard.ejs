@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', { title: title }) %>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrapper">
+        <%- include('../partials/sidebar', { user: user, active: 'dashboard' }) %>
+
+        <main class="dashboard-main-content">
+            <div class="dashboard-header">
+                <h1 class="glass-effect"><i class="fas fa-tachometer-alt icon"></i> Welcome Back, <%= user.username %>!</h1>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Overview Stats -->
+                <div class="card glass-effect dashboard-stat">
+                    <div class="card-icon"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="card-content">
+                        <h3>Earnings</h3>
+                        <p>$<%= user.earnings ? user.earnings.toLocaleString() : '0' %></p>
+                    </div>
+                </div>
+                <div class="card glass-effect dashboard-stat">
+                    <div class="card-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="card-content">
+                        <h3>Completed Jobs</h3>
+                        <p><%= user.completedJobs ? user.completedJobs : '0' %></p>
+                    </div>
+                </div>
+                <div class="card glass-effect dashboard-stat">
+                    <div class="card-icon"><i class="fas fa-star"></i></div>
+                    <div class="card-content">
+                        <h3>Average Rating</h3>
+                        <p><%= user.averageRating ? user.averageRating.toFixed(1) : '0' %> <i class="fas fa-star star-icon"></i></p>
+                    </div>
+                </div>
+
+                <!-- Current Projects -->
+                <div class="card glass-effect grid-span-2">
+                    <h3><i class="fas fa-project-diagram icon"></i> Current Projects</h3>
+                    <div class="project-list">
+                        <% if (user.currentProjects && user.currentProjects.length > 0) { %>
+                            <% user.currentProjects.forEach(project => { %>
+                                <div class="project-item">
+                                    <span class="project-title"><%= project.title %></span>
+                                    <span class="project-status status-<%= project.status.toLowerCase().replace(' ', '-') %>"><%= project.status %></span>
+                                    <div class="project-actions">
+                                        <a href="/jobs/<%= project._id %>" class="btn btn-small btn-secondary"><i class="fas fa-eye"></i> View</a>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <p class="no-data-message">Belum ada proyek yang sedang berjalan.</p>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <div class="card glass-effect notifications-card">
+                    <h3><i class="fas fa-bell icon"></i> Notifications</h3>
+                    <ul class="notification-list">
+                        <!-- Contoh Notifikasi (akan diambil dari DB nantinya) -->
+                        <li>New message from Client A on "Website Redesign"</li>
+                        <li>Offer received for "Logo Design"</li>
+                        <li>Your project "Mobile App Development" is pending review</li>
+                        <li class="see-all"><a href="/notifications">Lihat Semua</a></li>
+                    </ul>
+                </div>
+
+                <!-- Quick Access -->
+                <div class="card glass-effect quick-access-card">
+                    <h3><i class="fas fa-bolt icon"></i> Quick Access</h3>
+                    <div class="quick-access-buttons">
+                        <a href="/users/profile/<%= user._id %>" class="btn btn-secondary"><i class="fas fa-user-circle"></i> View Profile</a>
+                        <a href="/users/profile/<%= user._id %>#portfolio" class="btn btn-secondary"><i class="fas fa-file-alt"></i> View Portfolio</a>
+                        <a href="/chat" class="btn btn-primary"><i class="fas fa-comments"></i> Chat Now</a>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <script src="/js/main.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Socket.IO client-side (dasar)
+        const socket = io();
+
+        socket.on('connect', () => {
+            console.log('Connected to chat server');
+            // Jika ada sistem otentikasi Socket.IO, Anda akan mengirim token di sini
+            // Untuk sementara, anggap user sudah join room saat membuka dashboard
+            // socket.emit('join_chat', { userId: '<%= user._id %>' });
+        });
+
+        socket.on('receive_message', (data) => {
+            console.log('New message received:', data);
+            // Tambahkan notifikasi atau update UI chat
+            // alert(`Pesan baru dari ${data.sender.username}: ${data.messageText}`);
+        });
+
+        socket.on('chat_error', (errorMessage) => {
+            console.error('Chat error:', errorMessage);
+            alert('Error Chat: ' + errorMessage);
+        });
+    </script>
+</body>
+</html>

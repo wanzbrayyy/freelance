@@ -1,0 +1,73 @@
+<!-- views/jobs/create-job.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', { title: 'Buat Pekerjaan Baru' }) %>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrapper">
+        <%- include('../partials/sidebar', { user: currentUser, active: 'create-job' }) %>
+
+        <main class="dashboard-main-content">
+            <div class="page-header glass-effect">
+                <h1><i class="fas fa-plus-circle icon"></i> Buat Pekerjaan Baru</h1>
+                <p>Isi detail di bawah ini untuk menemukan freelancer yang tepat.</p>
+            </div>
+
+            <div class="card glass-effect">
+                <form action="/jobs/create" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="title">Judul Pekerjaan</label>
+                        <input type="text" id="title" name="title" placeholder="Contoh: Desain Logo untuk Perusahaan Startup" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Deskripsi Lengkap</label>
+                        <textarea id="description" name="description" rows="8" placeholder="Jelaskan secara detail apa yang Anda butuhkan, termasuk tujuan, target audiens, dan referensi jika ada." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Kategori</label>
+                        <select id="category" name="category" required>
+                            <option value="">Pilih Kategori</option>
+                            <option value="Web Development">Web Development</option>
+                            <option value="Mobile App Development">Mobile App Development</option>
+                            <option value="UI/UX Design">UI/UX Design</option>
+                            <option value="Graphic Design">Graphic Design</option>
+                            <option value="Writing & Translation">Writing & Translation</option>
+                            <option value="Digital Marketing">Digital Marketing</option>
+                            <option value="Video & Animation">Video & Animation</option>
+                            <option value="Music & Audio">Music & Audio</option>
+                            <option value="Programming & Tech">Programming & Tech</option>
+                            <option value="Business">Business</option>
+                            <option value="Other">Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="budget">Budget ($)</label>
+                        <input type="number" id="budget" name="budget" placeholder="Contoh: 500" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deadline">Deadline</label>
+                        <input type="date" id="deadline" name="deadline" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="attachments">Lampiran (Opsional, maks. 5 file)</label>
+                        <input type="file" id="attachments" name="attachments" multiple>
+                    </div>
+
+                    <% if (typeof error !== 'undefined' && error) { %>
+                        <p class="error-message"><%= error %></p>
+                    <% } %>
+
+                    <button type="submit" class="btn btn-primary">Posting Pekerjaan</button>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

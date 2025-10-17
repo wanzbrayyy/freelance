@@ -1,0 +1,79 @@
+<!-- views/chat.ejs (FINAL & SMART VERSION) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { title: title }) %>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="dashboard-body">
+    <!-- Hidden div untuk menyimpan data yang akan diambil oleh JavaScript -->
+    <div id="chat-init-data"
+         data-room-id="<%= typeof activeChatRoomId !== 'undefined' ? activeChatRoomId : '' %>"
+         data-receiver-id="<%= typeof activeChatPartner !== 'undefined' ? activeChatPartner._id : '' %>"
+         data-receiver-name="<%= typeof activeChatPartner !== 'undefined' ? activeChatPartner.username : '' %>">
+    </div>
+
+    <div class="dashboard-wrapper">
+        <%- include('partials/sidebar', { user: currentUser, active: 'chat' }) %>
+        <main class="dashboard-main-content">
+            <div class="chat-container glass-effect">
+                <div class="chat-sidebar">
+                    <div class="chat-search">
+                        <input type="text" placeholder="Cari percakapan...">
+                    </div>
+                    <ul class="conversation-list">
+                        <% if (conversations && conversations.length > 0) { %>
+                            <% conversations.forEach(conv => { %>
+                                <%
+                                // Menentukan apakah item ini adalah chat yang sedang aktif
+                                const isActive = typeof activeChatPartner !== 'undefined' && conv.partner._id.toString() === activeChatPartner._id.toString();
+                                %>
+                                <li class="conversation-item <%= isActive ? 'active' : '' %>"
+                                    data-room-id="<%= conv.chatRoomId %>"
+                                    data-receiver-id="<%= conv.partner._id %>">
+                                    <img src="<%= conv.partner.avatar || '/images/default-avatar.png' %>" alt="<%= conv.partner.username %>">
+                                    <div class="conversation-info">
+                                        <span class="conversation-name"><%= conv.partner.username %></span>
+                                        <span class="conversation-preview"><%= conv.lastMessage.messageText %></span>
+                                    </div>
+                                </li>
+                            <% }) %>
+                        <% } else { %>
+                            <p class="no-data-message" style="padding: 1rem;">Tidak ada percakapan.</p>
+                        <% } %>
+                    </ul>
+                </div>
+                <div class="chat-main">
+                    <div class="chat-header">
+                        <h3><%= typeof activeChatPartner !== 'undefined' ? activeChatPartner.username : 'Pilih Percakapan' %></h3>
+                    </div>
+<!-- views/chat.ejs -->
+<!-- ... (bagian atas file) ... -->
+
+<div class="chat-messages">
+    <!-- Placeholder ini akan tampil saat belum ada chat yang dipilih -->
+    <% if (typeof activeChatPartner === 'undefined') { %>
+        <div class="chat-placeholder">
+            <i class="fas fa-comments"></i>
+            <h3>Selamat Datang di Pesan</h3>
+            <p>Pilih percakapan dari panel kiri untuk memulai.</p>
+        </div>
+    <% } %>
+    <!-- Pesan-pesan akan dirender di sini oleh JavaScript -->
+</div>
+
+<!-- ... (bagian bawah file) ... -->
+                    <form class="chat-input-form">
+                        <input type="text" id="chatMessageInput" placeholder="Ketik pesan Anda..." autocomplete="off" <%= typeof activeChatPartner === 'undefined' ? 'disabled' : '' %>>
+                        <button type="submit" class="btn btn-primary" <%= typeof activeChatPartner === 'undefined' ? 'disabled' : '' %>><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

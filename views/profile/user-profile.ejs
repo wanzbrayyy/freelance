@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', { title: title }) %>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrapper">
+        <%- include('../partials/sidebar', { user: currentUser || {}, active: 'profile' }) %>
+
+        <main class="dashboard-main-content">
+            <div class="profile-header glass-effect">
+                <div class="profile-avatar-wrapper">
+                    <img src="<%= user.avatar || '/images/default-avatar.png' %>" alt="<%= user.username %>" class="profile-avatar">
+                    <% if (currentUser && currentUser._id.toString() === user._id.toString()) { %>
+                        <label for="avatarUpload" class="upload-avatar-btn"><i class="fas fa-camera"></i></label>
+                        <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                    <% } %>
+                </div>
+                <div class="profile-info">
+                    <h2><%= user.username %></h2>
+                    <p class="profile-role"><%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %></p>
+                    <p class="profile-bio"><%= user.bio || 'Belum ada bio.' %></p>
+                </div>
+                <div class="profile-actions">
+                    <% if (currentUser && currentUser._id.toString() === user._id.toString()) { %>
+                        <button class="btn btn-secondary edit-profile-btn"><i class="fas fa-edit"></i> Edit Profil</button>
+                    <% } else { %>
+                        <button class="btn btn-primary chat-btn" data-user-id="<%= user._id %>"><i class="fas fa-comments"></i> Chat Sekarang</button>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="profile-details-grid">
+                <% if (user.role === 'freelancer') { %>
+                    <div class="card glass-effect profile-section">
+                        <h3><i class="fas fa-award icon"></i> Skills</h3>
+                        <div class="skills-list">
+                            <% if (user.skills && user.skills.length > 0) { %>
+                                <% user.skills.forEach(skill => { %>
+                                    <span class="skill-tag"><%= skill %></span>
+                                <% }) %>
+                            <% } else { %>
+                                <p class="no-data-message">Belum ada skill.</p>
+                            <% } %>
+                            <% if (currentUser && currentUser._id.toString() === user._id.toString()) { %>
+                                <button class="btn btn-small btn-icon add-skill-btn"><i class="fas fa-plus"></i></button>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="card glass-effect profile-section grid-span-2" id="portfolio">
+                        <h3><i class="fas fa-folder-open icon"></i> Portfolio</h3>
+                        <div class="portfolio-list">
+                            <% if (user.portfolio && user.portfolio.length > 0) { %>
+                                <% user.portfolio.forEach(item => { %>
+                                    <div class="portfolio-item">
+                                        <div class="portfolio-thumbnail" style="background-image: url('<%= item.image || '/images/default-portfolio.jpg' %>');"></div>
+                                        <div class="portfolio-content">
+                                            <h4><%= item.name %></h4>
+                                            <a href="<%= item.link %>" target="_blank" rel="noopener noreferrer" class="portfolio-link"><%= item.link.length > 40 ? item.link.substring(0, 37) + '...' : item.link %></a>
+                                        </div>
+                                        <div class="portfolio-actions">
+                                            <button class="btn btn-small btn-primary preview-btn" data-link="<%= item.link %>"><i class="fas fa-eye"></i> Live Preview</button>
+                                            <% if (currentUser && currentUser._id.toString() === user._id.toString()) { %>
+                                                <button class="btn btn-small btn-secondary edit-portfolio-btn" data-id="<%= item._id %>" data-name="<%= item.name %>" data-link="<%= item.link %>" data-image="<%= item.image %>"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-small btn-danger delete-portfolio-btn" data-id="<%= item._id %>"><i class="fas fa-trash-alt"></i></button>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p class="no-data-message">Belum ada item portofolio.</p>
+                            <% } %>
+                            <% if (currentUser && currentUser._id.toString() === user._id.toString()) { %>
+                                <button class="btn btn-primary add-portfolio-btn"><i class="fas fa-plus"></i> Tambah Portofolio</button>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="card glass-effect profile-section">
+                        <h3><i class="fas fa-star-half-alt icon"></i> Reviews & Ratings</h3>
+                        <div class="ratings-summary">
+                            <span class="overall-rating"><%= user.averageRating ? user.averageRating.toFixed(1) : '0' %> <i class="fas fa-star star-icon"></i></span>
+                            <p class="total-reviews">(Dari <%= user.totalReviews || 0 %> ulasan)</p>
+                        </div>
+                        <div class="reviews-list">
+                            <% if (user.reviews && user.reviews.length > 0) { %>
+                                <% user.reviews.forEach(review => { %>
+                                    <div class="review-item">
+                                        <div class="reviewer-info">
+                                            <img src="<%= review.reviewer.avatar || '/images/default-avatar.png' %>" alt="<%= review.reviewer.username %>" class="reviewer-avatar">
+                                            <span class="reviewer-name"><%= review.reviewer.username %></span>
+                                            <span class="review-rating"><%= review.rating %> <i class="fas fa-star star-icon"></i></span>
+                                        </div>
+                                        <p class="review-comment">"<%= review.comment %>"</p>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p class="no-data-message">Belum ada ulasan.</p>
+                            <% } %>
+                        </div>
+                    </div>
+                <% } %>
+                <!-- Jika user adalah 'client', bisa tampilkan daftar pekerjaan yang dipostingnya di sini -->
+                <% if (user.role === 'client' && user.postedJobs && user.postedJobs.length > 0) { %>
+                    <div class="card glass-effect profile-section grid-span-2">
+                        <h3><i class="fas fa-briefcase icon"></i> Pekerjaan yang Diposting</h3>
+                        <div class="project-list">
+                            <% user.postedJobs.forEach(job => { %>
+                                <div class="project-item">
+                                    <span class="project-title"><%= job.title %></span>
+                                    <span class="project-status status-<%= job.status.toLowerCase().replace(' ', '-') %>"><%= job.status %></span>
+                                    <div class="project-actions">
+                                        <a href="/jobs/<%= job._id %>" class="btn btn-small btn-secondary"><i class="fas fa-eye"></i> Lihat Detail</a>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                <% } %>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals (untuk edit profil, skill, portofolio) -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content glass-effect">
+            <h3>Edit Profil</h3>
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label for="profileUsername">Username</label>
+                    <input type="text" id="profileUsername" name="username" value="<%= user.username %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="profileBio">Bio</label>
+                    <textarea id="profileBio" name="bio" rows="4"><%= user.bio %></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-secondary close-modal">Batal</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="editSkillsModal" class="modal">
+        <div class="modal-content glass-effect">
+            <h3>Edit Skills</h3>
+            <form id="editSkillsForm">
+                <div class="form-group">
+                    <label for="profileSkills">Skills (pisahkan dengan koma)</label>
+                    <input type="text" id="profileSkills" name="skills" value="<%= user.skills.join(', ') %>">
+                </div>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-secondary close-modal">Batal</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="portfolioModal" class="modal">
+        <div class="modal-content glass-effect">
+            <h3 id="portfolioModalTitle">Tambah Portofolio</h3>
+            <form id="portfolioForm" enctype="multipart/form-data">
+                <input type="hidden" id="portfolioId" name="portfolioId">
+                <div class="form-group">
+                    <label for="portfolioName">Nama Portofolio</label>
+                    <input type="text" id="portfolioName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="portfolioLink">Link Portofolio</label>
+                    <input type="url" id="portfolioLink" name="link" required>
+                </div>
+                <div class="form-group">
+                    <label for="portfolioImage">Gambar Portofolio</label>
+                    <input type="file" id="portfolioImage" name="portfolioImage" accept="image/*">
+                    <img id="currentPortfolioImage" src="" alt="Current Portfolio Image" style="max-width: 100px; margin-top: 10px; display: none;">
+                </div>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-secondary close-modal">Batal</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Modals
+            const editProfileModal = document.getElementById('editProfileModal');
+            const editSkillsModal = document.getElementById('editSkillsModal');
+            const portfolioModal = document.getElementById('portfolioModal');
+            const closeButtons = document.querySelectorAll('.close-modal');
+
+            closeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    editProfileModal.style.display = 'none';
+                    editSkillsModal.style.display = 'none';
+                    portfolioModal.style.display = 'none';
+                });
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target == editProfileModal) editProfileModal.style.display = 'none';
+                if (event.target == editSkillsModal) editSkillsModal.style.display = 'none';
+                if (event.target == portfolioModal) portfolioModal.style.display = 'none';
+            });
+
+            // Edit Profile
+            document.querySelector('.edit-profile-btn')?.addEventListener('click', () => {
+                editProfileModal.style.display = 'flex';
+            });
+            document.getElementById('editProfileForm')?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData.entries());
+                try {
+                    const response = await fetch(`/users/profile/<%= user._id %>`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert(result.message);
+                        location.reload();
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error updating profile:', error);
+                    alert('Gagal memperbarui profil.');
+                }
+            });
+
+            // Edit Skills
+            document.querySelector('.add-skill-btn')?.addEventListener('click', () => {
+                editSkillsModal.style.display = 'flex';
+            });
+            document.getElementById('editSkillsForm')?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData.entries());
+                data.skills = data.skills.split(',').map(s => s.trim()).filter(s => s); // Convert to array
+                try {
+                    const response = await fetch(`/users/profile/<%= user._id %>`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert(result.message);
+                        location.reload();
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error updating skills:', error);
+                    alert('Gagal memperbarui skills.');
+                }
+            });
+
+            // Avatar Upload
+            document.getElementById('avatarUpload')?.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('avatar', file);
+                    try {
+                        const response = await fetch('/users/profile/avatar', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const result = await response.json();
+                        if (result.success) {
+                            alert(result.message);
+                            location.reload();
+                        } else {
+                            alert('Error: ' + result.message);
+                        }
+                    } catch (error) {
+                        console.error('Error uploading avatar:', error);
+                        alert('Gagal mengunggah avatar.');
+                    }
+                }
+            });
+
+            // Portfolio
+            document.querySelector('.add-portfolio-btn')?.addEventListener('click', () => {
+                document.getElementById('portfolioModalTitle').textContent = 'Tambah Portofolio';
+                document.getElementById('portfolioId').value = '';
+                document.getElementById('portfolioName').value = '';
+                document.getElementById('portfolioLink').value = '';
+                document.getElementById('portfolioImage').value = '';
+                document.getElementById('currentPortfolioImage').style.display = 'none';
+                portfolioModal.style.display = 'flex';
+            });
+
+            document.querySelectorAll('.edit-portfolio-btn')?.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('portfolioModalTitle').textContent = 'Edit Portofolio';
+                    document.getElementById('portfolioId').value = btn.dataset.id;
+                    document.getElementById('portfolioName').value = btn.dataset.name;
+                    document.getElementById('portfolioLink').value = btn.dataset.link;
+                    const currentImage = document.getElementById('currentPortfolioImage');
+                    if (btn.dataset.image) {
+                        currentImage.src = btn.dataset.image;
+                        currentImage.style.display = 'block';
+                    } else {
+                        currentImage.style.display = 'none';
+                    }
+                    portfolioModal.style.display = 'flex';
+                });
+            });
+
+            // ... (Lanjutan dari skrip sebelumnya di dalam tag <script> di user-profile.ejs) ...
+            document.getElementById('portfolioForm')?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const portfolioId = formData.get('portfolioId');
+                const url = portfolioId ? `/users/profile/portfolio/${portfolioId}` : '/users/profile/portfolio';
+                const method = portfolioId ? 'PUT' : 'POST';
+
+                try {
+                    const response = await fetch(url, {
+                        method: method,
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert(result.message);
+                        location.reload();
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error submitting portfolio:', error);
+                    alert('Gagal menyimpan portofolio.');
+                }
+            });
+
+            // Delete Portfolio
+            document.querySelectorAll('.delete-portfolio-btn')?.forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const portfolioId = btn.dataset.id;
+                    if (confirm('Apakah Anda yakin ingin menghapus item portofolio ini?')) {
+                        try {
+                            const response = await fetch(`/users/profile/portfolio/${portfolioId}`, {
+                                method: 'DELETE'
+                            });
+                            const result = await response.json();
+                            if (result.success) {
+                                alert(result.message);
+                                location.reload();
+                            } else {
+                                alert('Error: ' + result.message);
+                            }
+                        } catch (error) {
+                            console.error('Error deleting portfolio:', error);
+                            alert('Gagal menghapus portofolio.');
+                        }
+                    }
+                });
+            });
+
+            // Preview Link
+            document.querySelectorAll('.preview-btn')?.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const link = btn.dataset.link;
+                    if (link) {
+                        window.open(link, '_blank', 'noopener,noreferrer');
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

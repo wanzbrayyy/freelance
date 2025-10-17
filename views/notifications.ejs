@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { title: 'Notifikasi' }) %>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrapper">
+        <%- include('partials/sidebar', { user: currentUser, active: 'notifications' }) %>
+        <main class="dashboard-main-content">
+            <div class="page-header glass-effect">
+                <h1><i class="fas fa-bell icon"></i> Semua Notifikasi</h1>
+                <button class="btn btn-secondary">Tandai Semua Terbaca</button>
+            </div>
+
+            <div class="notifications-page-list">
+                <!-- Contoh Notifikasi (akan diisi dari database) -->
+                <div class="notification-page-item unread">
+                    <i class="fas fa-file-signature icon proposal"></i>
+                    <div class="notification-content">
+                        <p>Anda menerima <strong>proposal baru</strong> untuk pekerjaan "Desain Logo Modern" dari FreelancerX.</p>
+                        <span class="notification-time">15 menit lalu</span>
+                    </div>
+                </div>
+                <div class="notification-page-item">
+                    <i class="fas fa-comments icon message"></i>
+                    <div class="notification-content">
+                        <p>Anda menerima <strong>pesan baru</strong> dari Client A.</p>
+                        <span class="notification-time">1 jam lalu</span>
+                    </div>
+                </div>
+                 <div class="notification-page-item">
+                    <i class="fas fa-check-circle icon completed"></i>
+                    <div class="notification-content">
+                        <p>Selamat! Pekerjaan "Website Company Profile" telah <strong>diselesaikan</strong>.</p>
+                        <span class="notification-time">Kemarin</span>
+                    </div>
+                </div>
+                <div class="notification-page-item">
+                    <i class="fas fa-star icon review"></i>
+                    <div class="notification-content">
+                        <p>FreelancerB meninggalkan <strong>ulasan baru</strong> untuk Anda.</p>
+                        <span class="notification-time">2 hari lalu</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('partials/head', { title: title }) %>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="main-body">
+    <%- include('partials/header') %>
+    <main class="main-content-container legal-page">
+        <div class="legal-content glass-effect">
+            <h1>Ketentuan Layanan</h1>
+            <p>Terakhir diperbarui: <%= new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) %></p>
+            <p><strong>PENTING:</strong> Dokumen ini adalah contoh. Anda sangat disarankan untuk berkonsultasi dengan profesional hukum untuk membuat Ketentuan Layanan yang sesuai dengan yurisdiksi dan model bisnis Anda.</p>
+
+            <h2>1. Penerimaan Ketentuan</h2>
+            <p>Dengan mengakses atau menggunakan platform Job Freelance ("Layanan"), Anda setuju untuk terikat oleh Ketentuan Layanan ini. Jika Anda tidak setuju dengan bagian mana pun dari ketentuan ini, Anda tidak diizinkan untuk menggunakan Layanan.</p>
+
+            <h2>2. Definisi</h2>
+            <ul>
+                <li><strong>Klien:</strong> Pengguna yang memposting pekerjaan atau mencari jasa freelancer.</li>
+                <li><strong>Freelancer:</strong> Pengguna yang menawarkan jasa atau mengajukan proposal untuk pekerjaan.</li>
+                <li><strong>Proyek:</strong> Pekerjaan yang diposting oleh Klien.</li>
+            </ul>
+
+            <h2>3. Akun Pengguna</h2>
+            <p>Anda bertanggung jawab untuk menjaga kerahasiaan akun dan kata sandi Anda. Anda setuju untuk menerima tanggung jawab atas semua aktivitas yang terjadi di bawah akun Anda. Anda harus memberikan informasi yang akurat dan lengkap saat mendaftar.</p>
+
+            <h2>4. Kewajiban Pengguna</h2>
+            <p>Anda setuju untuk tidak menggunakan Layanan untuk tujuan yang melanggar hukum atau dilarang oleh Ketentuan ini. Anda tidak boleh memposting konten yang bersifat melecehkan, memfitnah, atau melanggar hak kekayaan intelektual pihak lain.</p>
+
+            <h2>5. Pembayaran dan Biaya</h2>
+            <p>Job Freelance akan memfasilitasi pembayaran dari Klien ke Freelancer. Kami akan membebankan biaya layanan (komisi) untuk setiap transaksi yang berhasil diselesaikan melalui platform. Rincian biaya akan ditampilkan sebelum Anda menyelesaikan transaksi.</p>
+
+            <h2>6. Hak Kekayaan Intelektual</h2>
+            <p>Setelah Freelancer menerima pembayaran penuh dari Klien untuk suatu Proyek, semua hak kekayaan intelektual atas hasil kerja akan dialihkan kepada Klien, kecuali jika disepakati lain secara tertulis antara Klien dan Freelancer.</p>
+
+            <h2>7. Batasan Tanggung Jawab</h2>
+            <p>Job Freelance adalah platform yang menghubungkan Klien dan Freelancer. Kami tidak bertanggung jawab atas kualitas pekerjaan yang diberikan oleh Freelancer atau perselisihan apa pun yang mungkin timbul antara pengguna. Kami tidak mempekerjakan Freelancer dan tidak bertindak sebagai agen untuk Klien atau Freelancer.</p>
+            
+            <h2>8. Perubahan Ketentuan</h2>
+            <p>Kami berhak, atas kebijakan kami sendiri, untuk mengubah atau mengganti Ketentuan ini kapan saja. Jika revisi bersifat material, kami akan memberikan pemberitahuan setidaknya 30 hari sebelum ketentuan baru berlaku.</p>
+
+        </div>
+    </main>
+    <%- include('partials/footer') %>
+</body>
+</html>

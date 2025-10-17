@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', { title: title }) %>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrapper">
+        <%- include('../partials/sidebar', { user: user, active: 'dashboard' }) %>
+
+        <main class="dashboard-main-content">
+            <div class="dashboard-header">
+                <h1 class="glass-effect"><i class="fas fa-tachometer-alt icon"></i> Welcome Back, <%= user.username %>!</h1>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Overview Stats -->
+                <div class="card glass-effect dashboard-stat">
+                    <div class="card-icon"><i class="fas fa-briefcase"></i></div>
+                    <div class="card-content">
+                        <h3>Posted Jobs</h3>
+                        <p><%= user.postedJobsCount ? user.postedJobsCount : '0' %></p> <!-- Anda perlu menambahkan ini ke model User atau hitung dinamis -->
+                    </div>
+                </div>
+                <div class="card glass-effect dashboard-stat">
+                    <div class="card-icon"><i class="fas fa-users"></i></div>
+                    <div class="card-content">
+                        <h3>Active Freelancers</h3>
+                        <p>...</p> <!-- Akan diisi dengan data real -->
+                    </div>
+                </div>
+                <div class="card glass-effect dashboard-stat">
+                    <div class="card-icon"><i class="fas fa-star"></i></div>
+                    <div class="card-content">
+                        <h3>Average Rating Given</h3>
+                        <p>...</p> <!-- Akan diisi dengan data real -->
+                    </div>
+                </div>
+
+                <!-- Your Posted Jobs -->
+                <div class="card glass-effect grid-span-2">
+                    <h3><i class="fas fa-clipboard-list icon"></i> Your Posted Jobs</h3>
+                    <div class="project-list">
+                        <% if (user.postedJobs && user.postedJobs.length > 0) { %>
+                            <% user.postedJobs.forEach(job => { %>
+                                <div class="project-item">
+                                    <span class="project-title"><%= job.title %></span>
+                                    <span class="project-status status-<%= job.status.toLowerCase().replace(' ', '-') %>"><%= job.status %></span>
+                                    <div class="project-actions">
+                                        <a href="/jobs/<%= job._id %>" class="btn btn-small btn-secondary"><i class="fas fa-eye"></i> View</a>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        <% } else { %>
+                            <p class="no-data-message">Anda belum memposting pekerjaan apapun.</p>
+                        <% } %>
+                    </div>
+                    <div class="card-footer">
+                        <a href="/jobs/my-posted-jobs" class="btn btn-tertiary">See All Posted Jobs <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <div class="card glass-effect notifications-card">
+                    <h3><i class="fas fa-bell icon"></i> Notifications</h3>
+                    <ul class="notification-list">
+                        <!-- Contoh Notifikasi -->
+                        <li>New proposal for "Mobile App UI Design"</li>
+                        <li>Freelancer A completed "Logo Creation"</li>
+                        <li class="see-all"><a href="/notifications">Lihat Semua</a></li>
+                    </ul>
+                </div>
+
+                <!-- Quick Access -->
+                <div class="card glass-effect quick-access-card">
+                    <h3><i class="fas fa-bolt icon"></i> Quick Access</h3>
+                    <div class="quick-access-buttons">
+                        <a href="/jobs/create" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Post New Job</a>
+                        <a href="/jobs" class="btn btn-secondary"><i class="fas fa-search"></i> Find Freelancer</a>
+                        <a href="/chat" class="btn btn-secondary"><i class="fas fa-comments"></i> Messages</a>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+    <script src="/js/main.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        socket.on('connect', () => console.log('Connected to chat server'));
+        socket.on('receive_message', (data) => console.log('New message received:', data));
+        socket.on('chat_error', (errorMessage) => console.error('Chat error:', errorMessage));
+    </script>
+</body>
+</html>
