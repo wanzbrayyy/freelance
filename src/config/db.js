@@ -2,15 +2,16 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb+srv://zanssxploit:pISqUYgJJDfnLW9b@cluster0.fgram.mongodb.net/suntik?retryWrites=true&w=majority", {
+    const uri = process.env.MONGO_URI;
+    console.log("🔌 Connecting to MongoDB...");
+    await mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 10000, // timeout 10 detik
+      serverSelectionTimeoutMS: 30000,
     });
-    console.log("✅ MongoDB Connected...");
+    console.log("✅ MongoDB Connected!");
   } catch (err) {
     console.error("❌ Database connection failed:", err.message);
-    process.exit(1);
   }
 };
 
