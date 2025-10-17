@@ -23,7 +23,7 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 connectDB();
-
+app.use(cookieParser());
 app.set('io', io);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -6,17 +6,25 @@ const path = require('path');
 const http = require('http');
 const socketIo = require('socket.io');
 const cookieParser = require('cookie-parser');
-const Message = require('./models/message');
+
 const connectDB = require('./config/db');
-const cookieParser = require('cookie-parser'); 
+const Message = require('./models/message');
+const { setUserLocals, protect } = require('./middleware/authMiddleware');
+const userController = require('./controllers/userController');
+
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+const jobRoutes = require('./routes/jobRoutes');
+const freelancerRoutes = require('./routes/freelancerRoutes');
+const chatRoutes = require('./routes/chatRoutes');
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-app.set('io', io);
-
 connectDB();
 
+app.set('io', io);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -25,16 +33,7 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '..', 'views'));
 
-const { setUserLocals, protect } = require('./middleware/authMiddleware');
-const userController = require('./controllers/userController');
-
 app.use(setUserLocals);
-
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const jobRoutes = require('./routes/jobRoutes');
-const freelancerRoutes = require('./routes/freelancerRoutes');
-const chatRoutes = require('./routes/chatRoutes');
 
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
@@ -88,10 +87,8 @@ io.on('connection', (socket) => {
     socket.on('send_message', async (data) => {
         try {
             const newMessage = await Message.create({
-                chatRoomId: data.chatRoomId,
-                sender: data.senderId,
-                receiver: data.receiverId,
-                messageText: data.messageText
+                chatRoomId: data.chatRoomId, sender: data.senderId,
+                receiver: data.receiverId, messageText: data.messageText
             });
             const populatedMessage = await newMessage.populate('sender', 'username avatar');
             io.to(data.chatRoomId).emit('receive_message', populatedMessage);
@@ -103,16 +100,14 @@ io.on('connection', (socket) => {
 
 app.use((req, res, next) => {
     res.status(404).render('error', {
-        title: 'Halaman Tidak Ditemukan',
-        message: 'Halaman yang Anda cari tidak ada.'
+        title: 'Halaman Tidak Ditemukan', message: 'Halaman yang Anda cari tidak ada.'
     });
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Server berjalan lancar di http://localhost:${PORT}`));
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, () => console.log(`Server berjalan di http://localhost:${PORT}`));
 
-// Jalankan Bot Telegram
-const { bot } = require('./telegram'); // Pastikan path ini benar
+const { bot } = require('./telegram');
 if (process.env.NODE_ENV !== 'test') {
     bot.launch().then(() => {
         console.log('Bot Telegram sedang berjalan...');
