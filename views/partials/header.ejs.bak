@@ -1,34 +1,76 @@
-<!-- views/partials/header.ejs (UPDATED FOR MOBILE NAV) -->
+<!-- views/partials/header.ejs -->
 <header class="main-header glass-effect">
-    <div class="header-content">
-        <div class="header-left">
-            <a href="/" class="logo-link">
-                <img src="/images/logo.png" alt="Job Freelance Logo" class="header-logo">
-                <span class="logo-text">Job Freelance</span>
-            </a>
-        </div>
-        
-        <!-- Wrapper baru untuk semua item navigasi -->
-        <div class="nav-wrapper" id="navWrapper">
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="/jobs">Pekerjaan</a></li>
-                    <li><a href="/freelancers">Freelancer</a></li>
-                    <li><a href="/chat">Chat</a></li>
-                </ul>
-            </nav>
-            <div class="header-right">
-                <% if (currentUser) { %>
-                    <!-- ... (notifikasi dan user menu tetap di sini) ... -->
-                <% } else { %>
-                    <a href="/auth/login" class="btn btn-secondary"><i class="fas fa-sign-in-alt"></i> Masuk</a>
-                    <a href="/auth/register" class="btn btn-primary"><i class="fas fa-user-plus"></i> Daftar</a>
-                <% } %>
-            </div>
-        </div>
-        
-        <button class="hamburger-menu" id="hamburgerMenu">
-            <i class="fas fa-bars"></i>
-        </button>
+    <div class="header-left">
+        <a href="/" class="logo-link">
+            <img src="/images/logo.png" alt="Job Freelance Logo" class="header-logo">
+            <span class="logo-text">Job Freelance</span>
+        </a>
     </div>
+    <nav class="main-nav">
+        <ul>
+            <li><a href="/jobs">Pekerjaan</a></li>
+            <li><a href="/freelancers">Freelancer</a></li>
+            <li><a href="/chat">Chat</a></li>
+        </ul>
+    </nav>
+    <div class="header-right">
+        <% if (currentUser) { %>
+            <div class="notification-bell">
+                <a href="#" class="notification-icon">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </a>
+                <div class="dropdown-menu notification-dropdown glass-effect">
+                    <div class="notification-header">
+                        <span>Notifikasi</span>
+                        <a href="#">Tandai terbaca</a>
+                    </div>
+                    <ul class="notification-list">
+                        <li class="notification-item unread">
+                            <a href="#">
+                                <strong>Proposal Baru</strong> untuk "Desain Logo Modern".
+                                <span class="notification-time">15 menit lalu</span>
+                            </a>
+                        </li>
+                        <li class="notification-item">
+                            <a href="#">
+                                <strong>Pesan Baru</strong> dari Client A.
+                                <span class="notification-time">1 jam lalu</span>
+                            </a>
+                        </li>
+                         <li class="notification-item">
+                            <a href="#">
+                                Selamat! <strong>Pekerjaan Selesai</strong>. Dana telah ditambahkan.
+                                <span class="notification-time">Kemarin</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="notification-footer">
+                        <a href="/notifications">Lihat Semua Notifikasi</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-menu">
+                <a href="#" class="user-avatar-link">
+                    <img src="<%= currentUser.avatar %>" alt="<%= currentUser.username %>" class="user-avatar-small">
+                    <span class="user-name-header"><%= currentUser.username %></span>
+                </a>
+                <div class="dropdown-menu glass-effect">
+                    <a href="/dashboard/<%= currentUser.role %>"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    <a href="/users/profile/<%= currentUser._id %>"><i class="fas fa-user-circle"></i> Profil</a>
+                    <a href="/settings"><i class="fas fa-cog"></i> Pengaturan</a>
+                    <form action="/auth/logout" method="POST" style="display:inline;">
+                        <button type="submit" class="dropdown-item-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </form>
+                </div>
+            </div>
+        <% } else { %>
+            <a href="/auth/login" class="btn btn-secondary"><i class="fas fa-sign-in-alt"></i> Masuk</a>
+            <a href="/auth/register" class="btn btn-primary"><i class="fas fa-user-plus"></i> Daftar</a>
+        <% } %>
+    </div>
+    <button class="hamburger-menu">
+        <i class="fas fa-bars"></i>
+    </button>
 </header>
