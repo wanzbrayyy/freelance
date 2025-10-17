@@ -34,8 +34,9 @@ exports.postRegister = async (req, res) => {
     username,
     email,
     password,
-    role // langsung pakai dari form, karena sudah required dan enum
+    role: role || 'freelancer'
 });
+
 
 
         const token = createToken(user._id, user.role);
