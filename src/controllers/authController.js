@@ -10,13 +10,15 @@ const createToken = (userId, role) => {
   );
 };
 
-// === GET: Halaman Register ===
+// ===== HALAMAN REGISTER =====
 exports.getRegister = (req, res) => {
   res.render('auth/register', {
     title: 'Daftar Akun Baru',
-    error: req.query.error || null
+    error: req.query.error || null,
+    role: req.query.role || '' // Tambahkan ini biar EJS nggak error
   });
 };
+
 
 // === POST: Proses Register ===
 exports.postRegister = async (req, res) => {
