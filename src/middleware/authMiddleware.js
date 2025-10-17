@@ -3,26 +3,27 @@ const User = require('../models/user');
 
 // ===== Proteksi Route =====
 exports.protect = async (req, res, next) => {
-    let token = req.cookies.jwt;
-
-    if (!token) {
-        return res.redirect('/auth/login');
-    }
-
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "wkaoaowkwjenrbrnrejjwwkkw");
-        req.user = await User.findById(decoded.id).select('-password');
+        const token = req.cookies?.jwt; // aman dari undefined
 
-        if (!req.user) {
+        if (!token) {
+            return res.redirect('/auth/login');
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "wkaoaowkwjenrbrnrejjwwkkw");
+        const user = await User.findById(decoded.id).select('-password');
+
+        if (!user) {
             res.clearCookie('jwt');
             return res.redirect('/auth/login');
         }
 
-        if (!req.user.isActive) {
+        if (!user.isActive) {
             res.clearCookie('jwt');
             return res.redirect('/auth/login?error=Akun Anda telah dinonaktifkan.');
         }
 
+        req.user = user;
         next();
     } catch (err) {
         console.error('JWT Verify Error:', err.message);
@@ -34,7 +35,7 @@ exports.protect = async (req, res, next) => {
 // ===== Izin Akses Berdasarkan Role =====
 exports.authorize = (...roles) => {
     return (req, res, next) => {
-        if (!roles.includes(req.user.role)) {
+        if (!req.user || !roles.includes(req.user.role)) {
             return res.status(403).render('error', {
                 title: 'Akses Ditolak',
                 message: 'Anda tidak memiliki izin untuk mengakses halaman ini.'
@@ -44,24 +45,28 @@ exports.authorize = (...roles) => {
     };
 };
 
-// ===== Set User ke res.locals (untuk template EJS misalnya) =====
+// ===== Set User ke res.locals (untuk template EJS, dll) =====
 exports.setUserLocals = async (req, res, next) => {
-    if (req.cookies.jwt) {
-        try {
-            const decoded = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET || "wkaoaowkwjenrbrnrejjwwkkw");
-            const currentUser = await User.findById(decoded.id).select('-password');
-            if (currentUser && currentUser.isActive) {
-                res.locals.currentUser = currentUser;
-            } else {
-                res.locals.currentUser = null;
-                res.clearCookie('jwt');
-            }
-        } catch (err) {
+    try {
+        const token = req.cookies?.jwt; // optional chaining biar gak error
+        if (!token) {
+            res.locals.currentUser = null;
+            return next();
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "wkaoaowkwjenrbrnrejjwwkkw");
+        const currentUser = await User.findById(decoded.id).select('-password');
+
+        if (currentUser && currentUser.isActive) {
+            res.locals.currentUser = currentUser;
+        } else {
             res.locals.currentUser = null;
             res.clearCookie('jwt');
         }
-    } else {
+    } catch (err) {
+        console.error('setUserLocals Error:', err.message);
         res.locals.currentUser = null;
+        res.clearCookie('jwt');
     }
     next();
 };
