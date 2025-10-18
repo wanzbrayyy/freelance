@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta name="google-adsense-account" content="ca-pub-9198935842866616">
+    <script async 
+  src="https://api.trustedaccounts.org/js-sdk.js" 
+  onload="new TrustedTraffic({
+    publishableKey: 'pk_live_l3CCOUO7GbeW2guEnGnfN6KyBBWNgLbcUvMJcJrRVWlw09rCWEZ4S7J60oTsO57H'
+  }).init()">
+</script>
 </head>
 <body>
     <%- include('../partials/header') %>
