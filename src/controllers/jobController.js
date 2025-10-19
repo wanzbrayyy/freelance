@@ -153,36 +153,31 @@ exports.acceptProposal = async (req, res) => {
         res.status(500).json({ success: false, message: 'Gagal menerima proposal.' });
     }
 };
-
-// FUNGSI BARU: Saat freelancer menandai pekerjaan selesai
 exports.markAsFinishedByFreelancer = async (req, res) => {
     try {
         const { jobId } = req.body;
         const job = await Job.findById(jobId);
-        if (!job || job.acceptedFreelancer.toString() !== req.user._id.toString()) {
+        if (!job || !job.acceptedFreelancer || job.acceptedFreelancer.toString() !== req.user._id.toString()) {
             return res.status(403).json({ success: false, message: 'Anda bukan freelancer yang mengerjakan proyek ini.' });
         }
         if (job.status !== 'in-progress') {
             return res.status(400).json({ success: false, message: 'Pekerjaan ini tidak dalam status "in-progress".' });
         }
-
-        job.status = 'review'; // Ubah status menjadi 'review'
+        job.status = 'review';
         await job.save();
 
-        // Kirim notifikasi ke Klien
         const client = await User.findById(job.clientId);
         if (client && client.telegramId) {
             const notifMessage = `*🔔 Pekerjaan Perlu Direview!*\n\nFreelancer *${req.user.username}* telah menyelesaikan pekerjaan *${job.title}*. Silakan periksa dan setujui pembayaran.`;
             await sendNotification(client.telegramId, notifMessage);
         }
-
         res.json({ success: true, message: 'Pekerjaan telah ditandai selesai dan menunggu review dari klien.' });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Gagal menandai pekerjaan sebagai selesai.' });
     }
 };
 
-// DIMODIFIKASI: Sekarang ini adalah fungsi persetujuan akhir dari Klien
+// DIMODIFIKASI: Saat klien menyetujui dan membayar
 exports.completeJobAndPay = async (req, res) => {
     try {
         const { jobId } = req.body;
@@ -197,7 +192,6 @@ exports.completeJobAndPay = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Saldo Anda tidak cukup untuk membayar.' });
         }
 
-        // Pindahkan saldo
         job.clientId.balance -= job.budget;
         job.acceptedFreelancer.balance += job.budget;
         job.status = 'completed';
@@ -219,9 +213,6 @@ exports.completeJobAndPay = async (req, res) => {
         res.status(500).json({ success: false, message: 'Gagal menyelesaikan pembayaran.' });
     }
 };
-
-// ... (postReview, getJobList, getJobDetail, dll. lainnya tetap sama) ...
-
 exports.postReview = async (req, res) => {
     try {
         const { jobId, reviewedUser, rating, comment } = req.body;
