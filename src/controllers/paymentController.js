@@ -1,9 +1,75 @@
 // src/controllers/paymentController.js
 const User = require('../models/user');
 const Transaction = require('../models/transaction');
-const { v4: uuidv4 } = require('uuid'); // Install 'uuid': npm install uuid
+const { v4: uuidv4 } = require('uuid'); 
+const axios = require('axios'); 
+async function checkTransactionStatus(transaction) {
+    const { project, amount, order_id, api_key } = {
+        project: process.env.PAKASIR_SLUG,
+        amount: transaction.amount,
+        order_id: transaction.orderId,
+        api_key: process.env.PAKASIR_API_KEY
+    };
 
-// Halaman utama untuk keuangan (Deposit & Withdraw)
+    const url = `https://app.pakasir.com/api/transactiondetail?project=${project}&amount=${amount}&order_id=${order_id}&api_key=${api_key}`;
+
+    try {
+        const response = await axios.get(url);
+        const pakasirStatus = response.data.transaction.status;
+
+        if (pakasirStatus === 'completed' && transaction.status === 'pending') {
+            // Jika di Pakasir sudah lunas, update database kita
+            transaction.status = 'completed';
+            await transaction.save();
+            await User.findByIdAndUpdate(transaction.userId, { $inc: { balance: transaction.amount } });
+            console.log(`REKONSILIASI BERHASIL: Transaksi ${transaction.orderId} diperbarui menjadi 'completed'.`);
+            return `OK: ${transaction.orderId} - Lunas`;
+        } else {
+            console.log(`REKONSILIASI INFO: Status untuk ${transaction.orderId} adalah '${pakasirStatus}'.`);
+            return `INFO: ${transaction.orderId} - Belum Lunas`;
+        }
+    } catch (error) {
+        console.error(`REKONSILIASI GAGAL untuk ${transaction.orderId}:`, error.response ? error.response.data : error.message);
+        return `ERROR: ${transaction.orderId} - ${error.message}`;
+    }
+}
+
+// Halaman untuk rekonsiliasi manual
+exports.getReconciliationPage = async (req, res) => {
+    // Amankan halaman ini, hanya untuk admin
+    if (req.user.role !== 'admin') { // Asumsi Anda punya role admin
+        return res.status(403).send('Akses ditolak.');
+    }
+
+    const pendingTransactions = await Transaction.find({ status: 'pending', type: 'deposit' });
+
+    res.render('wallet/reconcile', {
+        title: 'Rekonsiliasi Transaksi',
+        transactions: pendingTransactions
+    });
+};
+
+// Aksi untuk menjalankan rekonsiliasi
+exports.runReconciliation = async (req, res) => {
+    if (req.user.role !== 'admin') {
+        return res.status(403).send('Akses ditolak.');
+    }
+
+    const pendingTransactions = await Transaction.find({ status: 'pending', type: 'deposit' });
+    const results = [];
+
+    for (const tx of pendingTransactions) {
+        const result = await checkTransactionStatus(tx);
+        results.push(result);
+    }
+
+    res.render('wallet/reconcile', {
+        title: 'Hasil Rekonsiliasi',
+        transactions: [], // Kosongkan agar tidak tampil lagi
+        results: results // Tampilkan hasilnya
+    });
+};
+
 exports.getWalletPage = async (req, res) => {
     try {
         const transactions = await Transaction.find({ userId: req.user._id }).sort({ createdAt: -1 }).limit(10);

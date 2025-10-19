@@ -1,0 +1,50 @@
+<!-- views/wallet/reconcile.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', { title: title }) %>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrapper">
+        <%- include('../partials/sidebar', { user: currentUser, active: 'wallet' }) %>
+        <main class="dashboard-main-content">
+            <div class="page-header glass-effect">
+                <h1><i class="fas fa-sync-alt icon"></i> Rekonsiliasi Transaksi Pending</h1>
+                <p>Cek ulang status transaksi deposit yang masih pending ke payment gateway.</p>
+            </div>
+
+            <% if (typeof results !== 'undefined') { %>
+                <div class="card glass-effect">
+                    <h3>Hasil Pengecekan:</h3>
+                    <ul>
+                        <% results.forEach(result => { %>
+                            <li><%= result %></li>
+                        <% }) %>
+                    </ul>
+                    <a href="/wallet/reconcile" class="btn btn-primary" style="margin-top: 1rem;">Cek Ulang</a>
+                </div>
+            <% } else { %>
+                <div class="card glass-effect">
+                    <h3>Transaksi Deposit Pending Ditemukan: <%= transactions.length %></h3>
+                    <% if (transactions.length > 0) { %>
+                        <p>Transaksi berikut akan diperiksa statusnya di Pakasir. Jika sudah lunas, saldo pengguna akan otomatis diperbarui.</p>
+                        <ul>
+                            <% transactions.forEach(tx => { %>
+                                <li>Order ID: <%= tx.orderId %> - Jumlah: Rp <%= tx.amount.toLocaleString('id-ID') %></li>
+                            <% }) %>
+                        </ul>
+                        <form action="/wallet/reconcile" method="POST" style="margin-top: 1.5rem;">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-play-circle"></i> Jalankan Pengecekan Sekarang
+                            </button>
+                        </form>
+                    <% } else { %>
+                        <p>Tidak ada transaksi deposit yang perlu direkonsiliasi.</p>
+                    <% } %>
+                </div>
+            <% } %>
+        </main>
+    </div>
+</body>
+</html>
