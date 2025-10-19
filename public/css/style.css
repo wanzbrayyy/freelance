@@ -1106,3 +1106,30 @@ a:hover { color: #fff; }
         justify-content: center;
     }
 }
+/* public/css/admin.css */
+/* ... (kode lama) ... */
+
+/* Table Styles */
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table th, .admin-table td { padding: 1rem; border-bottom: 1px solid var(--glass-border); text-align: left; }
+.admin-table th { font-weight: 600; }
+.admin-table a.btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
+.status-active, .status-completed, .btn-success { color: var(--success-color); }
+.status-inactive, .status-failed, .btn-danger, .negative-amount { color: var(--error-color); }
+.status-pending { color: var(--warning-color); }
+
+/* Search & Pagination */
+.search-form { display: flex; gap: 0.5rem; }
+.pagination { margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.5rem; }
+
+/* Detail Page */
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.detail-card { background: rgba(0,0,0,0.1); padding: 1.5rem; border-radius: var(--border-radius); }
+.detail-card h3 { margin-bottom: 1rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; }
+
+/* Withdrawals Page */
+.action-buttons { display: flex; gap: 0.5rem; }
+
+@media (max-width: 992px) {
+    .detail-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,42 @@
+<!-- views/admin/withdrawals.ejs -->
+<div class="page-header glass-effect">
+    <h1><i class="fas fa-hand-holding-usd icon"></i> Proses Penarikan Dana</h1>
+    <p>Setujui atau tolak permintaan penarikan dana dari freelancer.</p>
+</div>
+<div class="content-table glass-effect">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Tanggal</th>
+                <th>Username</th>
+                <th>Jumlah (IDR)</th>
+                <th>Info Bank</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (withdrawals.length > 0) { %>
+                <% withdrawals.forEach(w => { %>
+                    <tr>
+                        <td><%= new Date(w.createdAt).toLocaleString('id-ID') %></td>
+                        <td><%= w.userId.username %></td>
+                        <td class="negative-amount">Rp <%= Math.abs(w.amount).toLocaleString('id-ID') %></td>
+                        <td><%= w.details.bank %> - <%= w.details.accountNumber %></td>
+                        <td class="action-buttons">
+                            <form action="/admin/withdrawals/process/<%= w._id %>" method="POST">
+                                <input type="hidden" name="action" value="approve">
+                                <button type="submit" class="btn btn-small btn-success">Setujui</button>
+                            </form>
+                            <form action="/admin/withdrawals/process/<%= w._id %>" method="POST">
+                                <input type="hidden" name="action" value="reject">
+                                <button type="submit" class="btn btn-small btn-danger">Tolak</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <tr><td colspan="5" style="text-align: center;">Tidak ada permintaan penarikan dana yang pending.</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>

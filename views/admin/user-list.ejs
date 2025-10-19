@@ -1,0 +1,37 @@
+<!-- views/admin/user-list.ejs -->
+<div class="page-header glass-effect">
+    <h1><i class="fas fa-users icon"></i> Manajemen Pengguna</h1>
+    <form method="GET" action="/admin/users" class="search-form">
+        <input type="text" name="search" placeholder="Cari username atau email..." value="<%= searchQuery %>">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+    </form>
+</div>
+<div class="content-table glass-effect">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Username</th><th>Email</th><th>Role</th><th>Saldo (IDR)</th><th>Status</th><th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(u => { %>
+                <tr>
+                    <td><%= u.username %></td>
+                    <td><%= u.email %></td>
+                    <td><%= u.role %></td>
+                    <td><%= u.balance.toLocaleString('id-ID') %></td>
+                    <td><span class="status-<%= u.isActive ? 'active' : 'inactive' %>"><%= u.isActive ? 'Aktif' : 'Nonaktif' %></span></td>
+                    <td><a href="/admin/users/<%= u._id %>" class="btn btn-small btn-secondary">Detail</a></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+<div class="pagination">
+    <% if (currentPage > 1) { %>
+        <a href="/admin/users?page=<%= currentPage - 1 %>&search=<%= searchQuery %>" class="btn btn-secondary">Sebelumnya</a>
+    <% } %>
+    <% if (currentPage < totalPages) { %>
+        <a href="/admin/users?page=<%= currentPage + 1 %>&search=<%= searchQuery %>" class="btn btn-secondary">Berikutnya</a>
+    <% } %>
+</div>

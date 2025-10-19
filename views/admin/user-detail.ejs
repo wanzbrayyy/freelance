@@ -1,0 +1,49 @@
+<!-- views/admin/user-detail.ejs -->
+<div class="page-header glass-effect">
+    <h1><i class="fas fa-user-edit icon"></i> Detail: <%= targetUser.username %></h1>
+    <a href="/admin/users" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Kembali ke Daftar</a>
+</div>
+<div class="detail-grid">
+    <div class="detail-card main-info">
+        <h3>Informasi Utama</h3>
+        <p><strong>Email:</strong> <%= targetUser.email %></p>
+        <p><strong>Role:</strong> <%= targetUser.role %></p>
+        <p><strong>Saldo:</strong> Rp <%= targetUser.balance.toLocaleString('id-ID') %></p>
+        <p><strong>Status:</strong> <span class="status-<%= targetUser.isActive ? 'active' : 'inactive' %>"><%= targetUser.isActive ? 'Aktif' : 'Nonaktif' %></span></p>
+        <form action="/admin/users/status/<%= targetUser._id %>" method="POST" style="margin-top: 1rem;">
+            <button type="submit" class="btn <%= targetUser.isActive ? 'btn-danger' : 'btn-success' %>">
+                <%= targetUser.isActive ? 'Nonaktifkan' : 'Aktifkan' %> Akun
+            </button>
+        </form>
+    </div>
+    <div class="detail-card">
+        <h3>Penyesuaian Saldo</h3>
+        <form action="/admin/users/balance/<%= targetUser._id %>" method="POST">
+            <div class="form-group">
+                <label>Jumlah (Gunakan - untuk mengurangi)</label>
+                <input type="number" name="amount" placeholder="Contoh: 50000 atau -10000" required>
+            </div>
+            <div class="form-group">
+                <label>Alasan</label>
+                <input type="text" name="reason" placeholder="Contoh: Koreksi deposit, Bonus, dll." required>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Saldo</button>
+        </form>
+    </div>
+</div>
+<div class="content-table glass-effect" style="margin-top: 1.5rem;">
+    <h3>Riwayat Transaksi Terbaru</h3>
+    <table class="admin-table">
+        <thead><tr><th>Tanggal</th><th>Tipe</th><th>Jumlah (IDR)</th><th>Status</th></tr></thead>
+        <tbody>
+            <% recentTransactions.forEach(tx => { %>
+                <tr>
+                    <td><%= new Date(tx.createdAt).toLocaleString('id-ID') %></td>
+                    <td><%= tx.type %></td>
+                    <td><%= tx.amount.toLocaleString('id-ID') %></td>
+                    <td><span class="status-<%= tx.status %>"><%= tx.status %></span></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>

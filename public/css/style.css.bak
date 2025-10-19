@@ -954,3 +954,155 @@ a:hover { color: #fff; }
 .notification-page-item .icon.message { color: #9C27B0; background: rgba(156, 39, 176, 0.1); }
 .notification-page-item .icon.completed { color: #4CAF50; background: rgba(76, 175, 80, 0.1); }
 .notification-page-item .icon.review { color: #FFC107; background: rgba(255, 193, 7, 0.1); }
+
+/* public/css/style.css */
+/* ... (semua CSS lama Anda) ... */
+
+/* =================================== */
+/*  HOMEPAGE V2 STYLES (BARU)          */
+/* =================================== */
+.homepage-body {
+    background: var(--background-dark); /* Latar belakang solid untuk homepage */
+}
+
+/* Hero Section V2 */
+.hero-section-v2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4rem 2rem;
+    min-height: 80vh;
+    gap: 2rem;
+}
+.hero-content-v2 {
+    flex: 1;
+    max-width: 600px;
+}
+.hero-content-v2 h1 {
+    font-size: 3.5rem;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+.hero-content-v2 .subtitle {
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+    margin-bottom: 2rem;
+}
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+}
+.btn-large {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+}
+.hero-image-v2 {
+    flex: 1;
+    max-width: 500px;
+}
+.hero-image-v2 img {
+    width: 100%;
+    height: auto;
+}
+
+/* Feature Section */
+.feature-section, .category-section {
+    padding: 4rem 2rem;
+}
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+.section-title h2 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+.section-title p {
+    color: var(--secondary-color);
+    max-width: 600px;
+    margin: 0 auto;
+}
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+.feature-card {
+    text-align: center;
+    padding: 2.5rem;
+}
+.icon-feature {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+/* Category Section */
+.category-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+}
+.category-card {
+    background-color: var(--tertiary-color);
+    color: var(--text-light);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    text-align: center;
+    min-width: 180px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+.category-card:hover {
+    transform: translateY(-5px);
+    background-color: var(--primary-color);
+    color: var(--background-dark);
+}
+.category-card i {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+/* WhatsApp Promo Section */
+.promo-section-whatsapp {
+    background: linear-gradient(45deg, #25D366, #128C7E); /* Gradien warna WhatsApp */
+    color: #fff;
+    padding: 4rem 2rem;
+    text-align: center;
+    margin: 2rem;
+    border-radius: var(--border-radius);
+}
+.promo-content i.fab.fa-whatsapp {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+.promo-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+.promo-content p {
+    max-width: 700px;
+    margin: 0 auto 2rem auto;
+    line-height: 1.6;
+}
+.btn-whatsapp {
+    background-color: #fff;
+    color: #128C7E;
+    font-weight: 600;
+    padding: 1rem 2rem;
+}
+.btn-whatsapp:hover {
+    background-color: #f0f0f0;
+}
+
+/* Penyesuaian Responsif untuk Homepage Baru */
+@media (max-width: 992px) {
+    .hero-section-v2 {
+        flex-direction: column;
+        text-align: center;
+    }
+    .hero-buttons {
+        justify-content: center;
+    }
+}
