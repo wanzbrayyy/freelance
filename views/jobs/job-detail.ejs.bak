@@ -1,4 +1,4 @@
-<!-- views/jobs/job-detail.ejs (FIXED & COMPLETE) -->
+<!-- views/jobs/job-detail.ejs (FINAL & COMPLETE) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,50 +8,90 @@
 <body class="main-body">
     <%- include('../partials/header', { currentUser: locals.currentUser || null }) %>
     <main class="main-content-container job-detail-page">
+
         <div class="job-detail-header glass-effect">
             <h1><%= job.title %></h1>
             <div class="job-meta-header">
                 <span><i class="fas fa-tag icon"></i> <%= job.category %></span>
-                <span><i class="fas fa-money-bill-wave icon"></i> Budget: <strong>Rp <%= job.budget.toLocaleString('id-ID') %></strong></span>
+                <span><i class="fas fa-money-bill-wave icon"></i> <strong>Rp <%= job.budget.toLocaleString('id-ID') %></strong></span>
                 <span><i class="fas fa-clock icon"></i> Deadline: <%= new Date(job.deadline).toLocaleDateString('id-ID') %></span>
+                <span><i class="fas fa-info-circle icon"></i> Status: <span class="status-<%= job.status %>"><%= job.status %></span></span>
             </div>
         </div>
+
         <div class="job-detail-grid">
             <div class="job-detail-main glass-effect">
                 <h3><i class="fas fa-file-alt icon"></i> Deskripsi Pekerjaan</h3>
                 <p><%- job.description.replace(/\n/g, '<br>') %></p>
 
-                <!-- =================================== -->
-                <!--    BAGIAN AJUKAN PROPOSAL BARU    -->
-                <!-- =================================== -->
+                <!-- FORM AJUKAN PROPOSAL (HANYA UNTUK FREELANCER) -->
                 <% if (currentUser && currentUser.role === 'freelancer' && job.status === 'open' && !hasProposed) { %>
                     <div class="proposal-form-section">
                         <h3><i class="fas fa-paper-plane icon"></i> Ajukan Proposal Anda</h3>
                         <form id="proposalForm">
                             <input type="hidden" name="jobId" value="<%= job._id %>">
-                            <div class="form-group">
-                                <label for="proposedBudget">Budget yang Anda Ajukan (IDR)</label>
-                                <input type="number" id="proposedBudget" name="proposedBudget" placeholder="Contoh: 1500000" min="1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="deliveryTime">Perkiraan Waktu Pengiriman (dalam hari)</label>
-                                <input type="number" id="deliveryTime" name="deliveryTime" placeholder="Contoh: 7" min="1" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="coverLetter">Surat Lamaran</label>
-                                <textarea id="coverLetter" name="coverLetter" rows="6" placeholder="Jelaskan mengapa Anda adalah kandidat terbaik untuk pekerjaan ini. Tonjolkan keahlian dan pengalaman relevan Anda." required></textarea>
-                            </div>
+                            <div class="form-group"><label for="proposedBudget">Budget yang Anda Ajukan (IDR)</label><input type="number" id="proposedBudget" name="proposedBudget" required></div>
+                            <div class="form-group"><label for="deliveryTime">Perkiraan Waktu Pengiriman (hari)</label><input type="number" id="deliveryTime" name="deliveryTime" required></div>
+                            <div class="form-group"><label for="coverLetter">Surat Lamaran</label><textarea id="coverLetter" name="coverLetter" rows="6" required></textarea></div>
                             <button type="submit" class="btn btn-primary full-width">Kirim Proposal</button>
                         </form>
                     </div>
                 <% } else if (currentUser && currentUser.role === 'freelancer' && hasProposed) { %>
-                    <div class="info-message glass-effect">
-                        <i class="fas fa-check-circle icon"></i> Anda sudah mengajukan proposal untuk pekerjaan ini. Statusnya dapat dilihat di halaman "Proposal Saya".
+                    <div class="info-message glass-effect"><i class="fas fa-check-circle icon"></i> Anda sudah mengajukan proposal untuk pekerjaan ini.</div>
+                <% } %>
+
+                <!-- DAFTAR PROPOSAL (HANYA UNTUK KLIEN PEMILIK) -->
+                <% if (currentUser && currentUser._id.toString() === job.clientId._id.toString() && job.proposals && job.proposals.length > 0 && job.status === 'open') { %>
+                    <div class="proposals-list-section">
+                        <h3><i class="fas fa-users icon"></i> Proposal yang Masuk (<%= job.proposals.length %>)</h3>
+                        <% job.proposals.forEach(proposal => { %>
+                            <div class="proposal-card glass-effect">
+                                <div class="proposal-header">
+                                    <img src="<%= proposal.freelancerId.avatar || '/images/default-avatar.png' %>" alt="<%= proposal.freelancerId.username %>" class="proposal-avatar">
+                                    <div class="proposal-freelancer-info">
+                                        <h4><a href="/users/profile/<%= proposal.freelancerId._id %>"><%= proposal.freelancerId.username %></a></h4>
+                                        <span><%= proposal.freelancerId.averageRating.toFixed(1) %> <i class="fas fa-star star-icon"></i> (<%= proposal.freelancerId.totalReviews %> ulasan)</span>
+                                    </div>
+                                    <div class="proposal-bid-info"><span>Budget: Rp <%= proposal.proposedBudget.toLocaleString('id-ID') %></span><span>Waktu: <%= proposal.deliveryTime %> hari</span></div>
+                                </div>
+                                <p class="proposal-coverletter">"<%= proposal.coverLetter %>"</p>
+                                <div class="proposal-actions">
+                                    <button class="btn btn-primary accept-proposal-btn" data-job-id="<%= job._id %>" data-proposal-id="<%= proposal._id %>"><i class="fas fa-check"></i> Setujui Freelancer Ini</button>
+                                    <a href="/chat/<%= proposal.freelancerId._id %>" class="btn btn-secondary"><i class="fas fa-comments"></i> Chat</a>
+                                </div>
+                            </div>
+                        <% }) %>
                     </div>
                 <% } %>
-                <!-- =================================== -->
-                <!--    AKHIR BAGIAN PROPOSAL          -->
-                <!-- =================================== -->
+
+                <!-- PERSETUJUAN AKHIR (HANYA UNTUK KLIEN PEMILIK SAAT STATUS REVIEW) -->
+                <% if (currentUser && currentUser._id.toString() === job.clientId._id.toString() && job.status === 'review') { %>
+                    <div class="final-approval-section glass-effect">
+                        <h3><i class="fas fa-check-double icon"></i> Persetujuan Akhir</h3>
+                        <p>Freelancer telah menandai pekerjaan ini sebagai selesai. Silakan periksa hasilnya. Dengan menyetujui, dana sebesar <strong>Rp <%= job.budget.toLocaleString('id-ID') %></strong> akan ditransfer dari saldo Anda.</p>
+                        <button class="btn btn-success btn-large complete-and-pay-btn" data-job-id="<%= job._id %>">Setujui & Bayar Freelancer</button>
+                    </div>
+                <% } %>
+                
+                <!-- FORM RATING (HANYA UNTUK KLIEN PEMILIK SETELAH PEKERJAAN SELESAI) -->
+                <% if (currentUser && currentUser._id.toString() === job.clientId._id.toString() && job.status === 'completed' && job.acceptedFreelancer) { %>
+                    <div class="rating-section glass-effect">
+                        <h3><i class="fas fa-star icon"></i> Rate Freelancer Ini</h3>
+                        <p>Bagaimana pengalaman Anda bekerja dengan <strong><%= job.acceptedFreelancer.username %></strong>?</p>
+                        <form id="reviewForm">
+                            <div class="form-group"><label>Rating Anda</label>
+                                <div class="star-rating-input">
+                                    <i class="far fa-star" data-value="1"></i><i class="far fa-star" data-value="2"></i><i class="far fa-star" data-value="3"></i><i class="far fa-star" data-value="4"></i><i class="far fa-star" data-value="5"></i>
+                                </div>
+                                <input type="hidden" name="rating" id="ratingValue" required>
+                            </div>
+                            <div class="form-group"><label for="reviewComment">Ulasan (Opsional)</label><textarea name="comment" id="reviewComment" rows="4"></textarea></div>
+                            <input type="hidden" name="jobId" value="<%= job._id %>">
+                            <input type="hidden" name="reviewedUser" value="<%= job.acceptedFreelancer._id %>">
+                            <button type="submit" class="btn btn-primary">Kirim Ulasan</button>
+                        </form>
+                    </div>
+                <% } %>
 
             </div>
             <aside class="job-detail-sidebar glass-effect">
@@ -61,15 +101,13 @@
                     <h4><a href="/users/profile/<%= job.clientId._id %>"><%= job.clientId.username %></a></h4>
                 </div>
                 <% if (currentUser && currentUser._id.toString() !== job.clientId._id.toString()) { %>
-                    <a href="/chat/<%= job.clientId._id %>" class="btn btn-primary full-width">
-                        <i class="fas fa-comments"></i> Chat Klien
-                    </a>
+                    <a href="/chat/<%= job.clientId._id %>" class="btn btn-primary full-width"><i class="fas fa-comments"></i> Chat Klien</a>
                 <% } %>
             </aside>
         </div>
     </main>
     <%- include('../partials/footer', { currentUser: locals.currentUser || null }) %>
-   <script src="/js/main.js"></script>
+    <script src="/js/main.js"></script>
      <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Submit Proposal

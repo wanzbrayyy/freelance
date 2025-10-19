@@ -1,4 +1,4 @@
-// src/routes/jobRoutes.js (FIXED & COMPLETE)
+// src/routes/jobRoutes.js
 const express = require('express');
 const router = express.Router();
 const jobController = require('../controllers/jobController');
@@ -16,14 +16,17 @@ router.get('/my-posted-jobs', protect, authorize('client'), jobController.getMyP
 router.get('/', jobController.getJobList);
 router.get('/:id', jobController.getJobDetail);
 
-// Rute POST untuk aksi
+// Rute POST untuk aksi dalam siklus hidup pekerjaan
 router.post('/proposal', protect, authorize('freelancer'), jobController.postProposal);
 router.post('/accept-proposal', protect, authorize('client'), jobController.acceptProposal);
-router.post('/finish', protect, authorize('freelancer'), jobController.markAsFinishedByFreelancer);
 
-// PASTIKAN NAMA FUNGSI INI SESUAI DENGAN YANG DI CONTROLLER
+// Rute untuk freelancer menandai pekerjaan selesai (dengan upload bukti)
+router.post('/finish', protect, authorize('freelancer'), upload.single('proofImage'), jobController.markAsFinishedByFreelancer);
+
+// Rute untuk klien menyetujui pekerjaan dan mentransfer pembayaran
 router.post('/complete-and-pay', protect, authorize('client'), jobController.completeJobAndPay);
 
+// Rute untuk memberikan ulasan setelah pekerjaan selesai
 router.post('/review', protect, jobController.postReview);
 
 module.exports = router;

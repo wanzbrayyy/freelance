@@ -1,4 +1,4 @@
-<!-- views/freelancer/my-proposals.ejs (FIXED) -->
+<!-- views/freelancer/my-proposals.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,9 +7,7 @@
 </head>
 <body class="dashboard-body">
     <div class="dashboard-wrapper">
-        <!-- Mengirim 'user' dari controller, bukan 'currentUser' global -->
         <%- include('../partials/sidebar', { user: user, active: active }) %>
-
         <main class="dashboard-main-content">
             <div class="page-header glass-effect">
                 <h1><i class="fas fa-file-signature icon"></i> Proposal Saya</h1>
@@ -22,7 +20,7 @@
                             <th>Judul Pekerjaan</th>
                             <th>Tanggal Diajukan</th>
                             <th>Budget Diajukan</th>
-                            <th>Status</th>
+                            <th>Status Proposal</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -35,7 +33,15 @@
                                         <td><%= new Date(proposal.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></td>
                                         <td>Rp <%= proposal.proposedBudget.toLocaleString('id-ID') %></td>
                                         <td><span class="status-<%= proposal.status %>"><%= proposal.status %></span></td>
-                                        <td><a href="/jobs/<%= proposal.jobId._id %>" class="btn btn-small btn-secondary">Lihat Pekerjaan</a></td>
+                                        <td>
+                                            <% if (proposal.jobId.status === 'in-progress' && proposal.status === 'accepted') { %>
+                                                <button class="btn btn-small btn-success open-finish-modal-btn" data-job-id="<%= proposal.jobId._id %>" data-job-title="<%= proposal.jobId.title %>">
+                                                    Selesaikan Pekerjaan
+                                                </button>
+                                            <% } else { %>
+                                                <a href="/jobs/<%= proposal.jobId._id %>" class="btn btn-small btn-secondary">Lihat Pekerjaan</a>
+                                            <% } %>
+                                        </td>
                                     </tr>
                                 <% } %>
                             <% }) %>
@@ -49,5 +55,65 @@
             </div>
         </main>
     </div>
+
+    <div id="finishJobModal" class="modal">
+        <div class="modal-content glass-effect">
+            <h3>Selesaikan Pekerjaan: <span id="finishJobTitle"></span></h3>
+            <p>Unggah gambar (screenshot) sebagai bukti bahwa Anda telah menyelesaikan pekerjaan ini.</p>
+            <form id="finishJobForm" enctype="multipart/form-data">
+                <input type="hidden" id="finishJobId" name="jobId">
+                <div class="form-group">
+                    <label for="proofImage">Unggah Bukti Gambar (Screenshot)</label>
+                    <input type="file" id="proofImage" name="proofImage" accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <label for="finishNotes">Catatan untuk Klien (Opsional)</label>
+                    <textarea id="finishNotes" name="notes" rows="4" placeholder="Contoh: File sudah saya kirim ke email Anda. Silakan diperiksa."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">Kirim Bukti & Selesaikan</button>
+                    <button type="button" class="btn btn-secondary close-modal">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const finishJobModal = document.getElementById('finishJobModal');
+            const closeButtons = document.querySelectorAll('.close-modal');
+            document.querySelectorAll('.open-finish-modal-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('finishJobId').value = btn.dataset.jobId;
+                    document.getElementById('finishJobTitle').textContent = btn.dataset.jobTitle;
+                    finishJobModal.style.display = 'flex';
+                });
+            });
+            closeButtons.forEach(btn => btn.addEventListener('click', () => finishJobModal.style.display = 'none'));
+            window.addEventListener('click', (e) => { if (e.target == finishJobModal) finishJobModal.style.display = 'none'; });
+            document.getElementById('finishJobForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const submitButton = e.target.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Mengunggah...';
+                try {
+                    const response = await fetch('/jobs/finish', { method: 'POST', body: formData });
+                    const result = await response.json();
+                    alert(result.message);
+                    if (result.success) {
+                        window.location.reload();
+                    } else {
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Kirim Bukti & Selesaikan';
+                    }
+                } catch (error) {
+                    alert('Terjadi kesalahan. Gagal mengunggah bukti.');
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Kirim Bukti & Selesaikan';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

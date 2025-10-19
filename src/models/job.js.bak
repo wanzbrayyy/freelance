@@ -33,10 +33,10 @@ const jobSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['open', 'in-progress', 'review', 'completed', 'cancelled'],
+        enum: ['open', 'in-progress', 'completed', 'cancelled'],
         default: 'open'
     },
-    attachments: [String],
+    attachments: [String], // Array of Cloudinary URLs for attached files
     proposals: [
         {
             type: mongoose.Schema.ObjectId,
@@ -46,10 +46,6 @@ const jobSchema = new mongoose.Schema({
     acceptedFreelancer: {
         type: mongoose.Schema.ObjectId,
         ref: 'User'
-    },
-    completionProof: {
-        imageUrl: { type: String },
-        notes: { type: String }
     },
     reviewFromClient: {
         type: mongoose.Schema.ObjectId,

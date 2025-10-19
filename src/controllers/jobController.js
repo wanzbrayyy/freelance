@@ -153,9 +153,18 @@ exports.acceptProposal = async (req, res) => {
         res.status(500).json({ success: false, message: 'Gagal menerima proposal.' });
     }
 };
+// src/controllers/jobController.js
+// ... (fungsi lainnya)
+
+// FUNGSI INI SEKARANG MENANGANI UPLOAD FILE BUKTI
 exports.markAsFinishedByFreelancer = async (req, res) => {
     try {
-        const { jobId } = req.body;
+        const { jobId, notes } = req.body;
+        
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'Anda harus mengunggah file gambar sebagai bukti penyelesaian.' });
+        }
+
         const job = await Job.findById(jobId);
         if (!job || !job.acceptedFreelancer || job.acceptedFreelancer.toString() !== req.user._id.toString()) {
             return res.status(403).json({ success: false, message: 'Anda bukan freelancer yang mengerjakan proyek ini.' });
@@ -163,20 +172,30 @@ exports.markAsFinishedByFreelancer = async (req, res) => {
         if (job.status !== 'in-progress') {
             return res.status(400).json({ success: false, message: 'Pekerjaan ini tidak dalam status "in-progress".' });
         }
-        job.status = 'review';
+
+        // Simpan informasi bukti ke dalam job
+        job.completionProof = {
+            imageUrl: req.file.path, // URL aman dari Cloudinary
+            notes: notes
+        };
+        job.status = 'review'; // Ubah status menjadi 'review'
         await job.save();
 
+        // Kirim notifikasi ke Klien
         const client = await User.findById(job.clientId);
         if (client && client.telegramId) {
-            const notifMessage = `*🔔 Pekerjaan Perlu Direview!*\n\nFreelancer *${req.user.username}* telah menyelesaikan pekerjaan *${job.title}*. Silakan periksa dan setujui pembayaran.`;
+            const notifMessage = `*🔔 Pekerjaan Perlu Direview!*\n\nFreelancer *${req.user.username}* telah menyelesaikan pekerjaan *${job.title}* dan mengirimkan bukti. Silakan periksa dan setujui pembayaran.`;
             await sendNotification(client.telegramId, notifMessage);
         }
-        res.json({ success: true, message: 'Pekerjaan telah ditandai selesai dan menunggu review dari klien.' });
+
+        res.json({ success: true, message: 'Bukti berhasil diunggah dan pekerjaan menunggu review dari klien.' });
     } catch (err) {
+        console.error('Error in markAsFinishedByFreelancer:', err);
         res.status(500).json({ success: false, message: 'Gagal menandai pekerjaan sebagai selesai.' });
     }
 };
 
+// ... (fungsi lainnya)
 // DIMODIFIKASI: Saat klien menyetujui dan membayar
 exports.completeJobAndPay = async (req, res) => {
     try {
