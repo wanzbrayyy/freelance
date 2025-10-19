@@ -83,8 +83,8 @@ exports.createWithdrawal = async (req, res) => {
     const numericAmount = parseInt(amount, 10);
     const user = await User.findById(req.user._id);
 
-    if (!numericAmount || numericAmount < 15000) {
-        return res.redirect('/wallet?error=Jumlah penarikan minimal adalah Rp 15.000');
+    if (!numericAmount || numericAmount < 10000) {
+        return res.redirect('/wallet?error=Jumlah penarikan minimal adalah Rp 10.000');
     }
     if (user.balance < numericAmount) {
         return res.redirect('/wallet?error=Saldo Anda tidak mencukupi.');
