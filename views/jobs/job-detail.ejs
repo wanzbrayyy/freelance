@@ -1,4 +1,4 @@
-<!-- views/jobs/job-detail.ejs -->
+<!-- views/jobs/job-detail.ejs (FIXED & COMPLETE) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,12 +20,39 @@
             <div class="job-detail-main glass-effect">
                 <h3><i class="fas fa-file-alt icon"></i> Deskripsi Pekerjaan</h3>
                 <p><%- job.description.replace(/\n/g, '<br>') %></p>
-                <% if (currentUser && currentUser.role === 'freelancer' && job.status === 'open') { %>
+
+                <!-- =================================== -->
+                <!--    BAGIAN AJUKAN PROPOSAL BARU    -->
+                <!-- =================================== -->
+                <% if (currentUser && currentUser.role === 'freelancer' && job.status === 'open' && !hasProposed) { %>
                     <div class="proposal-form-section">
-                        <h3>Ajukan Proposal Anda</h3>
-                        <!-- Form proposal di sini -->
+                        <h3><i class="fas fa-paper-plane icon"></i> Ajukan Proposal Anda</h3>
+                        <form id="proposalForm">
+                            <input type="hidden" name="jobId" value="<%= job._id %>">
+                            <div class="form-group">
+                                <label for="proposedBudget">Budget yang Anda Ajukan (IDR)</label>
+                                <input type="number" id="proposedBudget" name="proposedBudget" placeholder="Contoh: 1500000" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="deliveryTime">Perkiraan Waktu Pengiriman (dalam hari)</label>
+                                <input type="number" id="deliveryTime" name="deliveryTime" placeholder="Contoh: 7" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="coverLetter">Surat Lamaran</label>
+                                <textarea id="coverLetter" name="coverLetter" rows="6" placeholder="Jelaskan mengapa Anda adalah kandidat terbaik untuk pekerjaan ini. Tonjolkan keahlian dan pengalaman relevan Anda." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary full-width">Kirim Proposal</button>
+                        </form>
+                    </div>
+                <% } else if (currentUser && currentUser.role === 'freelancer' && hasProposed) { %>
+                    <div class="info-message glass-effect">
+                        <i class="fas fa-check-circle icon"></i> Anda sudah mengajukan proposal untuk pekerjaan ini. Statusnya dapat dilihat di halaman "Proposal Saya".
                     </div>
                 <% } %>
+                <!-- =================================== -->
+                <!--    AKHIR BAGIAN PROPOSAL          -->
+                <!-- =================================== -->
+
             </div>
             <aside class="job-detail-sidebar glass-effect">
                 <h3><i class="fas fa-user-tie icon"></i> Tentang Klien</h3>
@@ -35,14 +62,14 @@
                 </div>
                 <% if (currentUser && currentUser._id.toString() !== job.clientId._id.toString()) { %>
                     <a href="/chat/<%= job.clientId._id %>" class="btn btn-primary full-width">
-                        <i class="fas fa-comments"></i> Chat Klien Mengenai Proyek Ini
+                        <i class="fas fa-comments"></i> Chat Klien
                     </a>
                 <% } %>
             </aside>
         </div>
     </main>
     <%- include('../partials/footer', { currentUser: locals.currentUser || null }) %>
-    <script src="/js/main.js"></script>
+   <script src="/js/main.js"></script>
      <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Submit Proposal

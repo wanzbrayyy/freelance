@@ -1,0 +1,53 @@
+<!-- views/freelancer/my-proposals.ejs (FIXED) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', { title: title }) %>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrapper">
+        <!-- Mengirim 'user' dari controller, bukan 'currentUser' global -->
+        <%- include('../partials/sidebar', { user: user, active: active }) %>
+
+        <main class="dashboard-main-content">
+            <div class="page-header glass-effect">
+                <h1><i class="fas fa-file-signature icon"></i> Proposal Saya</h1>
+                <p>Daftar semua proposal yang telah Anda ajukan untuk berbagai pekerjaan.</p>
+            </div>
+            <div class="content-table glass-effect">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Judul Pekerjaan</th>
+                            <th>Tanggal Diajukan</th>
+                            <th>Budget Diajukan</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (proposals && proposals.length > 0) { %>
+                            <% proposals.forEach(proposal => { %>
+                                <% if (proposal.jobId) { %>
+                                    <tr>
+                                        <td><%= proposal.jobId.title %></td>
+                                        <td><%= new Date(proposal.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></td>
+                                        <td>Rp <%= proposal.proposedBudget.toLocaleString('id-ID') %></td>
+                                        <td><span class="status-<%= proposal.status %>"><%= proposal.status %></span></td>
+                                        <td><a href="/jobs/<%= proposal.jobId._id %>" class="btn btn-small btn-secondary">Lihat Pekerjaan</a></td>
+                                    </tr>
+                                <% } %>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 2rem;">Anda belum mengajukan proposal apapun.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

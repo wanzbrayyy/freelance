@@ -202,3 +202,21 @@ function renderMessage(message, isMe) {
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll ke pesan terbaru
 }
+
+// public/js/main.js
+document.addEventListener('DOMContentLoaded', () => {
+    // ... (kode dropdown menu yang sudah ada) ...
+
+    // ===================================
+    //  LOGIKA MENU HAMBURGER BARU
+    // ===================================
+    const hamburgerMenu = document.getElementById('hamburgerMenu');
+    const navWrapper = document.getElementById('navWrapper');
+
+    if (hamburgerMenu && navWrapper) {
+        hamburgerMenu.addEventListener('click', () => {
+            navWrapper.classList.toggle('active');
+            hamburgerMenu.classList.toggle('is-active');
+        });
+    }
+});
