@@ -16,6 +16,9 @@
                 <li class="<%= active === 'profile' ? 'active' : '' %>">
                     <a href="/users/profile/<%= user._id %>"><i class="fas fa-user-circle icon"></i> Profile</a>
                 </li>
+<li class="<%= active === 'wallet' ? 'active' : '' %>">
+    <a href="/wallet"><i class="fas fa-wallet icon"></i> Dompet</a>
+</li>
                 <% if (user.role === 'freelancer') { %>
                     <li class="<%= active === 'proposals' ? 'active' : '' %>">
                         <a href="/freelancer/proposals"><i class="fas fa-file-signature icon"></i> Proposal Saya</a>

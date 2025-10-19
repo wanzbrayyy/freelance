@@ -11,7 +11,7 @@ const { setUserLocals, protect } = require('./middleware/authMiddleware');
 const connectDB = require('./config/db');
 const Message = require('./models/message');
 const userController = require('./controllers/userController');
-const paymentRoutes = require('./routes/paymentRoutes');
+
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const jobRoutes = require('./routes/jobRoutes');
@@ -52,7 +52,7 @@ app.use('/users', userRoutes);
 app.use('/jobs', jobRoutes);
 app.use('/freelancer', freelancerRoutes);
 app.use('/api/chat', chatRoutes);
-app.use('/wallet', paymentRoutes);
+
 app.get('/', (req, res) => {
   res.render('index', { title: 'Job Freelance - Temukan Pekerjaan Impianmu' });
 });

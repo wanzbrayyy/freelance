@@ -3,8 +3,13 @@ const Job = require('../models/job');
 const User = require('../models/user');
 const Proposal = require('../models/proposal');
 const Review = require('../models/review');
-const Transaction = require('../models/transaction');
-const { sendNotification } = require('../telegram'); 
+const { sendNotification } = require('../telegram'); // Impor fungsi notifikasi
+
+// ===================================
+//  MENAMPILKAN PEKERJAAN (READ)
+// ===================================
+
+// Tampilkan daftar semua pekerjaan yang statusnya 'open'
 exports.getJobList = async (req, res) => {
     try {
         const jobs = await Job.find({ status: 'open' })
@@ -16,10 +21,11 @@ exports.getJobList = async (req, res) => {
     }
 };
 
+// Tampilkan halaman detail untuk satu pekerjaan
 exports.getJobDetail = async (req, res) => {
     try {
         const job = await Job.findById(req.params.id)
-            .populate('clientId', 'username avatar balance')
+            .populate('clientId', 'username avatar')
             .populate({
                 path: 'proposals',
                 populate: {
@@ -27,20 +33,24 @@ exports.getJobDetail = async (req, res) => {
                     select: 'username avatar averageRating totalReviews'
                 }
             });
+
         if (!job) {
             return res.status(404).render('error', { title: 'Pekerjaan Tidak Ditemukan', message: 'Pekerjaan yang Anda cari tidak ada.' });
         }
+
         let hasProposed = false;
         if (res.locals.currentUser && res.locals.currentUser.role === 'freelancer') {
             const existingProposal = await Proposal.findOne({ jobId: job._id, freelancerId: res.locals.currentUser._id });
             if (existingProposal) hasProposed = true;
         }
+
         res.render('jobs/job-detail', { title: job.title, job, hasProposed });
     } catch (err) {
         res.status(500).render('error', { title: 'Error Server', message: 'Gagal mengambil detail pekerjaan.' });
     }
 };
 
+// Menampilkan semua pekerjaan yang diposting oleh klien yang sedang login
 exports.getMyPostedJobs = async (req, res) => {
     try {
         const jobs = await Job.find({ clientId: req.user._id }).sort({ createdAt: -1 });
@@ -57,20 +67,24 @@ exports.getMyPostedJobs = async (req, res) => {
 //  MEMBUAT PEKERJAAN (CREATE)
 // ===================================
 
+// Tampilkan form untuk membuat pekerjaan baru
 exports.getCreateJob = (req, res) => {
     res.render('jobs/create-job', {
         title: 'Buat Pekerjaan Baru', error: req.query.error
     });
 };
 
+// Proses data dari form pembuatan pekerjaan baru
 exports.postCreateJob = async (req, res) => {
     try {
         const { title, description, category, budget, deadline } = req.body;
         const attachments = req.files ? req.files.map(file => file.path) : [];
+
         const newJob = await Job.create({
             clientId: req.user._id, title, description,
             category, budget, deadline, attachments
         });
+
         res.redirect(`/jobs/${newJob._id}`);
     } catch (err) {
         let errorMessage = 'Gagal membuat pekerjaan baru.';
@@ -82,17 +96,14 @@ exports.postCreateJob = async (req, res) => {
 };
 
 // ===================================
-//  PROSES PROPOSAL & SIKLUS HIDUP PEKERJAAN
+//  PROSES PROPOSAL & PEKERJAAN
 // ===================================
 
+// Proses pengajuan proposal oleh freelancer
 exports.postProposal = async (req, res) => {
     try {
         const { jobId, coverLetter, proposedBudget, deliveryTime } = req.body;
-        const job = await Job.findById(jobId);
-        if (!job) {
-            return res.status(404).json({ success: false, message: 'Pekerjaan tidak ditemukan.' });
-        }
-        const existingProposal = await Proposal.findOne({ jobId, freelancerId: req.user._id });
+        const existingProposal = await Proposal.findOne({ jobId: jobId, freelancerId: req.user._id });
         if (existingProposal) {
             return res.status(400).json({ success: false, message: 'Anda sudah mengajukan proposal untuk pekerjaan ini.' });
         }
@@ -100,20 +111,27 @@ exports.postProposal = async (req, res) => {
             jobId, freelancerId: req.user._id, coverLetter,
             proposedBudget, deliveryTime
         });
-        job.proposals.push(proposal._id);
-        await job.save();
 
+        const job = await Job.findByIdAndUpdate(jobId, { $push: { proposals: proposal._id } });
+
+        // Kirim Notifikasi Telegram ke Klien
         const client = await User.findById(job.clientId);
         if (client && client.telegramId) {
             const notifMessage = `*🔔 Proposal Baru Diterima!*\n\nAnda menerima proposal baru untuk pekerjaan *${job.title}* dari freelancer *${req.user.username}*.`;
             await sendNotification(client.telegramId, notifMessage);
         }
+
         res.json({ success: true, message: 'Proposal berhasil diajukan!' });
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Gagal mengajukan proposal.' });
+        let errorMessage = 'Gagal mengajukan proposal.';
+        if (err.name === 'ValidationError') {
+            errorMessage = Object.values(err.errors).map(val => val.message).join(', ');
+        }
+        res.status(500).json({ success: false, message: errorMessage });
     }
 };
 
+// Proses penerimaan proposal oleh klien
 exports.acceptProposal = async (req, res) => {
     try {
         const { jobId, proposalId } = req.body;
@@ -133,61 +151,56 @@ exports.acceptProposal = async (req, res) => {
         await job.save();
         proposal.status = 'accepted';
         await proposal.save();
-        await Proposal.updateMany({ jobId, _id: { $ne: proposalId } }, { status: 'rejected' });
+        await Proposal.updateMany({ jobId: jobId, _id: { $ne: proposalId } }, { status: 'rejected' });
 
+        // Kirim Notifikasi Telegram ke Freelancer yang Diterima
         const freelancer = await User.findById(proposal.freelancerId);
         if (freelancer && freelancer.telegramId) {
             const notifMessage = `*🎉 Selamat! Proposal Anda Diterima!*\n\nProposal Anda untuk pekerjaan *${job.title}* telah diterima oleh klien *${req.user.username}*. Proyek telah dimulai!`;
             await sendNotification(freelancer.telegramId, notifMessage);
         }
+
         res.json({ success: true, message: 'Proposal berhasil diterima dan pekerjaan dimulai!' });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Gagal menerima proposal.' });
     }
 };
 
+// Menyelesaikan pekerjaan
 exports.completeJob = async (req, res) => {
     try {
         const { jobId } = req.body;
-        const job = await Job.findById(jobId).populate('clientId').populate('acceptedFreelancer');
+        const job = await Job.findById(jobId);
         if (!job) {
             return res.status(404).json({ success: false, message: 'Pekerjaan tidak ditemukan.' });
         }
-        if (job.clientId._id.toString() !== req.user._id.toString()) {
-            return res.status(403).json({ success: false, message: 'Hanya klien yang memposting pekerjaan yang bisa menyelesaikan proyek.' });
+        if (job.clientId.toString() !== req.user._id.toString() && job.acceptedFreelancer.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ success: false, message: 'Anda tidak memiliki izin.' });
         }
-        if (job.status !== 'in-progress') {
-            return res.status(400).json({ success: false, message: `Pekerjaan ini tidak dalam status 'in-progress'.` });
+        if (job.status === 'in-progress') {
+            job.status = 'completed';
+            await job.save();
+            await User.findByIdAndUpdate(job.acceptedFreelancer, {
+                $inc: { earnings: job.budget, completedJobs: 1 }
+            });
+
+            // Kirim Notifikasi ke Klien dan Freelancer
+            const client = await User.findById(job.clientId);
+            const freelancer = await User.findById(job.acceptedFreelancer);
+            const notifMessage = `*✅ Pekerjaan Selesai!*\n\nPekerjaan *${job.title}* telah ditandai sebagai selesai. Silakan berikan ulasan Anda.`;
+            if (client && client.telegramId) await sendNotification(client.telegramId, notifMessage);
+            if (freelancer && freelancer.telegramId) await sendNotification(freelancer.telegramId, notifMessage);
+            
+            res.json({ success: true, message: 'Pekerjaan berhasil diselesaikan!' });
+        } else {
+            res.status(400).json({ success: false, message: `Pekerjaan ini tidak dalam status 'in-progress'.` });
         }
-        if (job.clientId.balance < job.budget) {
-            return res.status(400).json({ success: false, message: 'Saldo Anda tidak cukup untuk membayar pekerjaan ini. Silakan isi saldo terlebih dahulu.' });
-        }
-
-        job.clientId.balance -= job.budget;
-        job.acceptedFreelancer.balance += job.budget;
-        job.status = 'completed';
-        
-        await job.clientId.save();
-        await job.acceptedFreelancer.save();
-        await job.save();
-
-        await Transaction.create({ userId: job.clientId._id, type: 'payment', amount: -job.budget, status: 'completed', details: { jobId: job._id, jobTitle: job.title } });
-        await Transaction.create({ userId: job.acceptedFreelancer._id, type: 'payout', amount: job.budget, status: 'completed', details: { jobId: job._id, jobTitle: job.title } });
-
-        const notifMessage = `*✅ Pekerjaan Selesai!*\n\nPekerjaan *${job.title}* telah ditandai sebagai selesai dan pembayaran telah ditransfer. Jangan lupa untuk memberikan ulasan.`;
-        if (job.clientId.telegramId) await sendNotification(job.clientId.telegramId, notifMessage);
-        if (job.acceptedFreelancer.telegramId) await sendNotification(job.acceptedFreelancer.telegramId, notifMessage);
-        
-        res.json({ success: true, message: 'Pekerjaan berhasil diselesaikan dan pembayaran telah dikirim!' });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Gagal menyelesaikan pekerjaan.' });
     }
 };
 
-// ===================================
-//  ULASAN (REVIEW)
-// ===================================
-
+// Memberikan review setelah pekerjaan selesai
 exports.postReview = async (req, res) => {
     try {
         const { jobId, reviewedUser, rating, comment } = req.body;
@@ -206,16 +219,12 @@ exports.postReview = async (req, res) => {
         await Review.create({
             jobId, reviewer: req.user._id, reviewedUser, rating, comment
         });
-
-        // Kirim notifikasi ke pengguna yang di-review
-        const userToNotify = await User.findById(reviewedUser);
-        if (userToNotify && userToNotify.telegramId) {
-            const notifMessage = `*⭐ Ulasan Baru Diterima!*\n\nAnda menerima ulasan baru dari *${req.user.username}* untuk pekerjaan *${job.title}* dengan rating *${rating} bintang*.`;
-            await sendNotification(userToNotify.telegramId, notifMessage);
-        }
-        
         res.json({ success: true, message: 'Review berhasil ditambahkan!' });
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Gagal menambahkan review.' });
+        let errorMessage = 'Gagal menambahkan review.';
+        if (err.name === 'ValidationError') {
+            errorMessage = Object.values(err.errors).map(val => val.message).join(', ');
+        }
+        res.status(500).json({ success: false, message: errorMessage });
     }
 };

@@ -8,6 +8,7 @@
 <body class="dashboard-body">
     <div class="dashboard-wrapper">
         <%- include('../partials/sidebar', { user: currentUser || {}, active: 'profile' }) %>
+
         <main class="dashboard-main-content">
             <div class="profile-header glass-effect">
                 <div class="profile-avatar-wrapper">
@@ -20,21 +21,19 @@
                 <div class="profile-info">
                     <h2><%= user.username %></h2>
                     <p class="profile-role"><%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %></p>
-                    <% if (currentUser && currentUser._id.toString() === user._id.toString()) { %>
-                        <p class="profile-balance">Saldo Anda: <strong>Rp <%= user.balance.toLocaleString('id-ID') %></strong></p>
-                    <% } %>
                     <p class="profile-bio"><%= user.bio || 'Belum ada bio.' %></p>
                 </div>
                 <div class="profile-actions">
                     <% if (currentUser && currentUser._id.toString() === user._id.toString()) { %>
                         <button class="btn btn-secondary edit-profile-btn"><i class="fas fa-edit"></i> Edit Profil</button>
                     <% } else { %>
-                        <a href="/chat/<%= user._id %>" class="btn btn-primary chat-btn"><i class="fas fa-comments"></i> Chat Sekarang</a>
+                        <button class="btn btn-primary chat-btn" data-user-id="<%= user._id %>"><i class="fas fa-comments"></i> Chat Sekarang</button>
                     <% } %>
                 </div>
             </div>
+
             <div class="profile-details-grid">
-                <% if (user.role === 'freelaner') { %>
+                <% if (user.role === 'freelancer') { %>
                     <div class="card glass-effect profile-section">
                         <h3><i class="fas fa-award icon"></i> Skills</h3>
                         <div class="skills-list">
@@ -45,38 +44,145 @@
                             <% } else { %>
                                 <p class="no-data-message">Belum ada skill.</p>
                             <% } %>
+                            <% if (currentUser && currentUser._id.toString() === user._id.toString()) { %>
+                                <button class="btn btn-small btn-icon add-skill-btn"><i class="fas fa-plus"></i></button>
+                            <% } %>
                         </div>
                     </div>
 
-                    <div class="card glass-effect profile-section" id="portfolio">
+                    <div class="card glass-effect profile-section grid-span-2" id="portfolio">
                         <h3><i class="fas fa-folder-open icon"></i> Portfolio</h3>
                         <div class="portfolio-list">
-                            <!-- Logika portofolio di sini -->
+                            <% if (user.portfolio && user.portfolio.length > 0) { %>
+                                <% user.portfolio.forEach(item => { %>
+                                    <div class="portfolio-item">
+                                        <div class="portfolio-thumbnail" style="background-image: url('<%= item.image || '/images/default-portfolio.jpg' %>');"></div>
+                                        <div class="portfolio-content">
+                                            <h4><%= item.name %></h4>
+                                            <a href="<%= item.link %>" target="_blank" rel="noopener noreferrer" class="portfolio-link"><%= item.link.length > 40 ? item.link.substring(0, 37) + '...' : item.link %></a>
+                                        </div>
+                                        <div class="portfolio-actions">
+                                            <button class="btn btn-small btn-primary preview-btn" data-link="<%= item.link %>"><i class="fas fa-eye"></i> Live Preview</button>
+                                            <% if (currentUser && currentUser._id.toString() === user._id.toString()) { %>
+                                                <button class="btn btn-small btn-secondary edit-portfolio-btn" data-id="<%= item._id %>" data-name="<%= item.name %>" data-link="<%= item.link %>" data-image="<%= item.image %>"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-small btn-danger delete-portfolio-btn" data-id="<%= item._id %>"><i class="fas fa-trash-alt"></i></button>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p class="no-data-message">Belum ada item portofolio.</p>
+                            <% } %>
+                            <% if (currentUser && currentUser._id.toString() === user._id.toString()) { %>
+                                <button class="btn btn-primary add-portfolio-btn"><i class="fas fa-plus"></i> Tambah Portofolio</button>
+                            <% } %>
                         </div>
                     </div>
 
                     <div class="card glass-effect profile-section">
                         <h3><i class="fas fa-star-half-alt icon"></i> Reviews & Ratings</h3>
                         <div class="ratings-summary">
-                            <span class="overall-rating"><%= user.averageRating ? user.averageRating.toFixed(1) : '0' %> 
-                                <span class="star-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </span>
-                            </span>
+                            <span class="overall-rating"><%= user.averageRating ? user.averageRating.toFixed(1) : '0' %> <i class="fas fa-star star-icon"></i></span>
                             <p class="total-reviews">(Dari <%= user.totalReviews || 0 %> ulasan)</p>
                         </div>
                         <div class="reviews-list">
-                            <!-- Logika menampilkan ulasan di sini -->
+                            <% if (user.reviews && user.reviews.length > 0) { %>
+                                <% user.reviews.forEach(review => { %>
+                                    <div class="review-item">
+                                        <div class="reviewer-info">
+                                            <img src="<%= review.reviewer.avatar || '/images/default-avatar.png' %>" alt="<%= review.reviewer.username %>" class="reviewer-avatar">
+                                            <span class="reviewer-name"><%= review.reviewer.username %></span>
+                                            <span class="review-rating"><%= review.rating %> <i class="fas fa-star star-icon"></i></span>
+                                        </div>
+                                        <p class="review-comment">"<%= review.comment %>"</p>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p class="no-data-message">Belum ada ulasan.</p>
+                            <% } %>
                         </div>
                     </div>
                 <% } %>
+                <!-- Jika user adalah 'client', bisa tampilkan daftar pekerjaan yang dipostingnya di sini -->
+                <% if (user.role === 'client' && user.postedJobs && user.postedJobs.length > 0) { %>
+                    <div class="card glass-effect profile-section grid-span-2">
+                        <h3><i class="fas fa-briefcase icon"></i> Pekerjaan yang Diposting</h3>
+                        <div class="project-list">
+                            <% user.postedJobs.forEach(job => { %>
+                                <div class="project-item">
+                                    <span class="project-title"><%= job.title %></span>
+                                    <span class="project-status status-<%= job.status.toLowerCase().replace(' ', '-') %>"><%= job.status %></span>
+                                    <div class="project-actions">
+                                        <a href="/jobs/<%= job._id %>" class="btn btn-small btn-secondary"><i class="fas fa-eye"></i> Lihat Detail</a>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                <% } %>
+
             </div>
         </main>
-    </div
+    </div>
+
+    <!-- Modals (untuk edit profil, skill, portofolio) -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content glass-effect">
+            <h3>Edit Profil</h3>
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label for="profileUsername">Username</label>
+                    <input type="text" id="profileUsername" name="username" value="<%= user.username %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="profileBio">Bio</label>
+                    <textarea id="profileBio" name="bio" rows="4"><%= user.bio %></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-secondary close-modal">Batal</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="editSkillsModal" class="modal">
+        <div class="modal-content glass-effect">
+            <h3>Edit Skills</h3>
+            <form id="editSkillsForm">
+                <div class="form-group">
+                    <label for="profileSkills">Skills (pisahkan dengan koma)</label>
+                    <input type="text" id="profileSkills" name="skills" value="<%= user.skills.join(', ') %>">
+                </div>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-secondary close-modal">Batal</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="portfolioModal" class="modal">
+        <div class="modal-content glass-effect">
+            <h3 id="portfolioModalTitle">Tambah Portofolio</h3>
+            <form id="portfolioForm" enctype="multipart/form-data">
+                <input type="hidden" id="portfolioId" name="portfolioId">
+                <div class="form-group">
+                    <label for="portfolioName">Nama Portofolio</label>
+                    <input type="text" id="portfolioName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="portfolioLink">Link Portofolio</label>
+                    <input type="url" id="portfolioLink" name="link" required>
+                </div>
+                <div class="form-group">
+                    <label for="portfolioImage">Gambar Portofolio</label>
+                    <input type="file" id="portfolioImage" name="portfolioImage" accept="image/*">
+                    <img id="currentPortfolioImage" src="" alt="Current Portfolio Image" style="max-width: 100px; margin-top: 10px; display: none;">
+                </div>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-secondary close-modal">Batal</button>
+            </form>
+        </div>
+    </div>
+
+
     <script src="/js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
