@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', { title: title }) %>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-wrapper">
+        <%- include('sidebar', { user: user, active: active }) %>
+        <main class="dashboard-main-content">
+            <div class="page-header glass-effect">
+                <h1><i class="fas fa-shield-alt icon"></i> Admin Dashboard</h1>
+                <p>Selamat datang, <%= user.username %>. Kelola platform dari sini.</p>
+            </div>
+
+            <div class="admin-stats-grid">
+                <!-- ... (konten stat-card tetap sama) ... -->
+            </div>
+
+            <div class="admin-lists-grid">
+                <!-- ... (konten tabel tetap sama) ... -->
+            </div>
+        </main>
+    </div>
+</body>
+</html>

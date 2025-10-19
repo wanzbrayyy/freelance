@@ -10,7 +10,7 @@ router.use(setUserLocals);
 // ===================================
 //  URUTAN RUTE YANG DIPERBAIKI
 // ===================================
-
+router.post('/finish', protect, authorize('freelancer'), jobController.markAsFinishedByFreelancer);
 // Rute yang lebih spesifik harus di atas
 router.get('/create', protect, authorize('client'), jobController.getCreateJob);
 router.post('/create', protect, authorize('client'), upload.array('attachments', 5), jobController.postCreateJob);
@@ -28,5 +28,5 @@ router.post('/proposal', protect, authorize('freelancer'), jobController.postPro
 router.post('/accept-proposal', protect, authorize('client'), jobController.acceptProposal);
 router.post('/complete', protect, jobController.completeJob);
 router.post('/review', protect, jobController.postReview);
-
+router.post('/complete-and-pay', protect, authorize('client'), jobController.completeJobAndPay);
 module.exports = router;

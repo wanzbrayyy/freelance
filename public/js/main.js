@@ -283,3 +283,56 @@ document.addEventListener('DOMContentLoaded', () => {
         // ... (semua kode logika chat Anda yang sudah ada tetap di sini) ...
     }
 });
+// public/js/main.js
+document.addEventListener('DOMContentLoaded', () => {
+    // ... (semua kode JS lama) ...
+
+    // Saat freelancer menandai selesai
+    document.querySelectorAll('.finish-job-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const jobId = btn.dataset.jobId;
+            if (confirm('Apakah Anda yakin ingin menandai pekerjaan ini sebagai selesai?')) {
+                const response = await fetch('/jobs/finish', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ jobId })
+                });
+                const result = await response.json();
+                alert(result.message);
+                if (result.success) window.location.reload();
+            }
+        });
+    });
+
+    // Saat klien menyetujui dan membayar
+    document.querySelector('.complete-and-pay-btn')?.addEventListener('click', async (e) => {
+        const jobId = e.target.dataset.jobId;
+        if (confirm('Anda akan mentransfer pembayaran ke freelancer. Apakah Anda yakin?')) {
+            const response = await fetch('/jobs/complete-and-pay', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ jobId })
+            });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) window.location.reload();
+        }
+    });
+
+    // Logika untuk input rating bintang
+    const stars = document.querySelectorAll('.star-rating-input .fa-star');
+    const ratingValueInput = document.getElementById('ratingValue');
+    stars.forEach(star => {
+        star.addEventListener('mouseover', (e) => {
+            const rating = e.target.dataset.value;
+            stars.forEach(s => {
+                s.classList.toggle('fas', s.dataset.value <= rating);
+                s.classList.toggle('far', s.dataset.value > rating);
+            });
+        });
+        star.addEventListener('click', (e) => {
+            const rating = e.target.dataset.value;
+            ratingValueInput.value = rating;
+        });
+    });
+});

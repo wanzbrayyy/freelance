@@ -3,28 +3,30 @@ const express = require('express');
 const router = express.Router();
 const jobController = require('../controllers/jobController');
 const { protect, authorize, setUserLocals } = require('../middleware/authMiddleware');
-const upload = require('../middleware/uploadMiddleware'); // Untuk upload lampiran
+const upload = require('../middleware/uploadMiddleware');
 
 router.use(setUserLocals);
 
-// Daftar pekerjaan (publik, tapi bisa difilter untuk user login)
-router.get('/', jobController.getJobList);
+// ===================================
+//  URUTAN RUTE YANG DIPERBAIKI
+// ===================================
+
+// Rute yang lebih spesifik harus di atas
+router.get('/create', protect, authorize('client'), jobController.getCreateJob);
+router.post('/create', protect, authorize('client'), upload.array('attachments', 5), jobController.postCreateJob);
+
+// Rute ini juga spesifik, jadi letakkan di atas rute dinamis :id
+// (Kita akan buat controllernya nanti)
+router.get('/my-posted-jobs', protect, authorize('client'), jobController.getMyPostedJobs); 
+
+// Rute dinamis (:id) diletakkan di bawah rute spesifik
 router.get('/:id', jobController.getJobDetail);
 
-// Membuat pekerjaan baru (hanya klien yang bisa)
-router.get('/create', protect, authorize('client'), jobController.getCreateJob);
-router.post('/create', protect, authorize('client'), upload.array('attachments', 5), jobController.postCreateJob); // Max 5 lampiran
-
-// Mengajukan proposal (hanya freelancer yang bisa)
+// Rute lainnya bisa di bawah sini
+router.get('/', jobController.getJobList); // Rute root untuk job list
 router.post('/proposal', protect, authorize('freelancer'), jobController.postProposal);
-
-// Menerima proposal (hanya klien yang bisa)
 router.post('/accept-proposal', protect, authorize('client'), jobController.acceptProposal);
-
-// Menyelesaikan pekerjaan (klien atau freelancer)
 router.post('/complete', protect, jobController.completeJob);
-
-// Memberikan review
 router.post('/review', protect, jobController.postReview);
 
 module.exports = router;

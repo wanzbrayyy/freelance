@@ -1133,3 +1133,19 @@ a:hover { color: #fff; }
 @media (max-width: 992px) {
     .detail-grid { grid-template-columns: 1fr; }
 }
+/* public/css/style.css */
+/* ... (di bagian bawah sebelum @media queries) ... */
+.final-approval-section, .rating-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border-top: 1px solid var(--glass-border);
+}
+.btn-success {
+    background-color: var(--success-color);
+    color: white;
+}
+.star-rating-input {
+    font-size: 1.5rem;
+    color: var(--warning-color);
+    cursor: pointer;
+}

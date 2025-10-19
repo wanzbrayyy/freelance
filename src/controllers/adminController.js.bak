@@ -4,30 +4,26 @@ const Job = require('../models/job');
 const Transaction = require('../models/transaction');
 const mongoose = require('mongoose');
 
+// Halaman Utama Dashboard
 exports.getDashboard = async (req, res) => {
     try {
         const totalUsers = await User.countDocuments();
         const totalJobs = await Job.countDocuments();
         const activeJobs = await Job.countDocuments({ status: { $in: ['open', 'in-progress'] } });
         const pendingWithdrawals = await Transaction.countDocuments({ type: 'withdrawal', status: 'pending' });
-
         const latestUsers = await User.find().sort({ createdAt: -1 }).limit(5);
         const latestJobs = await Job.find().populate('clientId', 'username').sort({ createdAt: -1 }).limit(5);
-
         res.render('admin/dashboard', {
-            title: 'Admin Dashboard',
-            user: req.user,
-            active: 'dashboard', // Untuk menandai menu aktif di sidebar
+            title: 'Admin Dashboard', layout: 'admin/layout', user: req.user,
             stats: { totalUsers, totalJobs, activeJobs, pendingWithdrawals },
-            latestUsers,
-            latestJobs
+            latestUsers, latestJobs
         });
     } catch (err) {
-        console.error("Admin Dashboard Error:", err);
         res.status(500).render('error', { title: 'Server Error', message: 'Gagal memuat dashboard admin.' });
     }
 };
 
+// Manajemen Pengguna
 exports.getUserList = async (req, res) => {
     try {
         const page = parseInt(req.query.page, 10) || 1;
@@ -43,8 +39,7 @@ exports.getUserList = async (req, res) => {
         const users = await User.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit);
         const totalUsers = await User.countDocuments(query);
         res.render('admin/user-list', {
-            title: 'Manajemen Pengguna',
-            user: req.user, active: 'users',
+            title: 'Manajemen Pengguna', layout: 'admin/layout', user: req.user,
             users, currentPage: page, totalPages: Math.ceil(totalUsers / limit),
             searchQuery: req.query.search || ''
         });
@@ -52,6 +47,7 @@ exports.getUserList = async (req, res) => {
         res.status(500).render('error', { title: 'Server Error', message: 'Gagal memuat daftar pengguna.' });
     }
 };
+
 exports.getUserDetail = async (req, res) => {
     try {
         const targetUser = await User.findById(req.params.id);
